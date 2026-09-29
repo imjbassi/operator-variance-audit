@@ -77,9 +77,16 @@ def main():
         if len(A) == 10:
             vec = A.success_rate.to_numpy(float)
             bs = vc.bootstrap_seed_sd(vec, a.n_boot, rng)
-            T["A"] = {"success_rates": vec.tolist(), "mean": float(vec.mean()), "sd_seed": vc.seed_sd(vec),
+            # Descriptive (limitation 7): binomial SD of a single 50-rollout success estimate at the mean
+            # rate, and the seed SD after subtracting that noise floor in quadrature (not used in tests).
+            pbar = float(vec.mean()); n_roll = int(A.n_rollouts.iloc[0])
+            binom_sd = float(np.sqrt(pbar * (1 - pbar) / n_roll))
+            sd_raw = vc.seed_sd(vec)
+            T["A"] = {"success_rates": vec.tolist(), "mean": pbar, "sd_seed": sd_raw,
                       "sd_seed_ci": [float(np.percentile(bs, 2.5)), float(np.percentile(bs, 97.5))],
-                      "min": float(vec.min()), "max": float(vec.max())}
+                      "min": float(vec.min()), "max": float(vec.max()),
+                      "binomial_sd_50_rollouts": binom_sd,
+                      "sd_seed_minus_binomial": float(np.sqrt(max(sd_raw ** 2 - binom_sd ** 2, 0.0)))}
             T["arms_available"].append("A")
         elif len(A):
             T["A_partial"] = {"n_done": int(len(A)), "success_rates": A.success_rate.tolist()}
@@ -140,6 +147,8 @@ def main():
             A = T["A"]
             lines += [f"**Arm A** (10 seeds, 300 demos): mean {A['mean']:.3f}, seed SD {A['sd_seed']:.3f} "
                       f"[{A['sd_seed_ci'][0]:.3f}, {A['sd_seed_ci'][1]:.3f}], range {A['min']:.2f}-{A['max']:.2f}",
+                      f"Binomial SD of one 50-rollout estimate at this mean: {A['binomial_sd_50_rollouts']:.3f}; "
+                      f"seed SD after removing that floor in quadrature: {A['sd_seed_minus_binomial']:.3f} (descriptive only)",
                       "", "seeds 1-10: " + ", ".join(f"{x:.2f}" for x in A["success_rates"]), ""]
         elif "A_partial" in T:
             lines += [f"Arm A partial: {T['A_partial']['n_done']}/10 done", ""]
