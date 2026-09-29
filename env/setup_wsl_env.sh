@@ -48,6 +48,7 @@ uv pip freeze > "$OVA/requirements-lock.txt"
 echo "lock written: $OVA/requirements-lock.txt"
 
 # ---- sanity ----
+cd "$OVA"   # not inside src/, where the robomimic repo dir would shadow the package
 python - <<'EOF'
 import torch, numpy, mujoco, robosuite, robomimic, h5py, statsmodels
 print("torch", torch.__version__, "cuda", torch.cuda.is_available(), torch.version.cuda)

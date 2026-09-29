@@ -9,7 +9,7 @@ Writes  <out_dir>/rollouts.csv  (one row per rollout)  and  <out_dir>/metrics.js
 Usage:
   python scripts/eval_final.py --ckpt <model_epoch_2000.pth> --task square --out_dir <run_dir>/eval
 """
-import argparse, csv, hashlib, json, os, time
+import argparse, csv, hashlib, json, os, re, time
 import numpy as np
 import torch
 
@@ -38,16 +38,19 @@ def main():
     ap.add_argument("--n", type=int, default=None, help="override number of rollouts (smoke tests only)")
     a = ap.parse_args()
 
-    states = np.load(os.path.join(HERE, "..", "initial_states", f"{a.task}.npz"))["states"]
+    npz = np.load(os.path.join(HERE, "..", "initial_states", f"{a.task}.npz"))
+    states, models = npz["states"], [str(m) for m in npz["models"]]
     with open(os.path.join(HERE, "..", "initial_states", f"{a.task}.json")) as fh:
         smeta = json.load(fh)
     assert hashlib.sha256(states.tobytes()).hexdigest() == smeta["states_sha256"], "initial states file altered"
+    assert [hashlib.sha256(m.encode()).hexdigest()[:16] for m in models] == smeta["model_xml_sha256_16"], "model xmls altered"
     n = a.n or states.shape[0]
 
     device = TorchUtils.get_torch_device(try_to_use_cuda=True)
     policy, ckpt_dict = FileUtils.policy_from_checkpoint(ckpt_path=a.ckpt, device=device, verbose=False)
     env, _ = FileUtils.env_from_checkpoint(ckpt_dict=ckpt_dict, render=False, render_offscreen=False, verbose=False)
-    ckpt_epoch = ckpt_dict.get("epoch", None)
+    m_ep = re.search(r"model_epoch_(\d+)\.pth$", os.path.basename(a.ckpt))
+    ckpt_epoch = int(m_ep.group(1)) if m_ep else ckpt_dict.get("epoch", None)
 
     os.makedirs(a.out_dir, exist_ok=True)
     rows = []
@@ -57,7 +60,8 @@ def main():
         torch.manual_seed(EVAL_SEED_BASE + i)
         policy.start_episode()
         env.reset()
-        obs = env.reset_to({"states": states[i]})
+        # restore the exact model XML (per-episode geometry) AND the simulator state
+        obs = env.reset_to({"model": models[i], "states": states[i]})
         success, steps = False, 0
         for t in range(a.horizon):
             act = policy(ob=obs)

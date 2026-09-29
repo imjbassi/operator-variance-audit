@@ -90,7 +90,8 @@ def try_claim(run_dir, stale_hours):
 
 
 def touch(path):
-    os.utime(path, None)
+    if os.path.exists(path):  # smoke runs have no lock file
+        os.utime(path, None)
 
 
 def execute(run, run_dir, epochs, n_eval):

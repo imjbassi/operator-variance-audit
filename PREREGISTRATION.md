@@ -201,4 +201,28 @@ all three arms and the analysis scripts are complete.
 
 ## Amendments
 
-(none)
+**Amendment 1 (2026-09-29, before any experimental run; found by synthetic
+tests of the analysis code, no real data seen).**
+
+(a) Secondary tier test (6.7). The between-tier share depends only on how the
+six partitions are paired, not on which tier name each pair carries, so the
+90 labellings collapse to 15 distinct pairings. The exact permutation p-value
+therefore has a floor of 1/15 = 0.067 and can never reject at alpha = 0.05.
+The test is retained and reported with its floor stated, but the secondary
+claim will be assessed primarily by effect size: the observed between-tier
+share against the null mean share, and the within-tier versus between-tier
+mean absolute difference of partition means. No significance claim will be
+made from the permutation test; Holm correction of the secondary family is
+reported for completeness only.
+
+(b) Power statement (6.6). In addition to the closed-form F-test minimum
+detectable SD, the power of the actual preregistered headline procedure
+(operator/seed joint bootstrap, decision "interval excludes 1") is estimated
+by simulation under the fitted Arm A seed SD and Arm B seed and residual
+SDs, on a grid of partition SDs. Synthetic runs before any data showed this
+procedure has low power at six operators (about 2% at a true ratio of 1.6
+with a 0.05 residual SD), so a negative headline result must be read
+together with this curve rather than as evidence of a small effect.
+
+(c) Code fix, not a design change: the REML wrapper double-scaled the
+variance components; corrected before any data were analysed.

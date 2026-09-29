@@ -57,6 +57,7 @@ def main():
     ap.add_argument("--runs", default=os.path.join(REPO, "results", "runs.csv"))
     ap.add_argument("--n_boot", type=int, default=2000)
     ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument("--n_power_sim", type=int, default=200)
     a = ap.parse_args()
     df = pd.read_csv(a.runs)
     df["seed"] = df["seed"].astype(int)
@@ -103,6 +104,11 @@ def main():
                 rr2 = vc.bootstrap_ratio(Bt, np.array(T["A"]["success_rates"]), min(a.n_boot, 500), rng, "reml")
                 T["headline_ratio_reml"] = clean(rr2)
                 prim_p.append(rr["p_R_le_1"]); prim_labels.append(f"{task}:R>1")
+                # Amendment 1(b): power of the actual headline procedure under fitted nuisance SDs
+                sdA = T["A"]["sd_seed"]
+                grid = [round(sdA * f, 4) for f in (1.0, 1.5, 2.0, 3.0, 4.0)] if sdA > 0 else []
+                T["power_headline_procedure"] = vc.power_ratio_sim(
+                    sdA, mom["sd_e"], mom["sd_s"], grid, n_sim=a.n_power_sim, n_boot=300, rng=rng) if grid else {}
             sec_p.append(T["B"]["tier_permutation"]["p_value"]); sec_labels.append(f"{task}:tier")
         # ---- Arm C
         Ct = table(df, "C", task, C_keys, [1, 2, 3])
@@ -156,9 +162,15 @@ def main():
                 if arm == "B":
                     tp, pw = X["tier_permutation"], X["tier_pairwise"]
                     lines += [f"Within-B ratio SD_p/SD_s = {X['within_table_ratio']:.2f}",
-                              f"Tier: between-tier share {tp['observed_share']:.2f} (null mean {tp['null_mean_share']:.2f}), exact permutation p = {tp['p_value']:.3f}; "
+                              f"Tier: between-tier share {tp['observed_share']:.2f} (null mean {tp['null_mean_share']:.2f}), exact permutation p = {tp['p_value']:.3f} "
+                              f"(floor 1/15 = {tp['min_achievable_p']:.3f}; cannot reject at 0.05 by design, see Amendment 1a); "
                               f"within-tier mean |diff| {pw['within_tier_mean_absdiff']:.3f} vs between-tier {pw['between_tier_mean_absdiff']:.3f}",
                               f"Minimum detectable SD_partition (F-test, alpha 0.05, power 0.8): {X['min_detectable_sd_p_alpha05']:.3f}", ""]
+                    if T.get("power_headline_procedure"):
+                        lines += ["Power of the preregistered headline procedure (P(interval excludes 1)) at fitted nuisance SDs:", "",
+                                  "| true SD_partition | true R | power |", "|---|---|---|"]
+                        lines += [f"| {k:.3f} | {v['true_R']:.2f} | {v['power']:.2f} |" for k, v in T["power_headline_procedure"].items()]
+                        lines.append("")
         if "headline_ratio_mom" in T:
             h, h2 = T["headline_ratio_mom"], T["headline_ratio_reml"]
             lines += [f"**Headline R = SD_partition(B) / SD_seed(A)**: MoM {h['point']:.2f} [{h['ci_low']:.2f}, {h['ci_high']:.2f}] "

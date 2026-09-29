@@ -72,7 +72,9 @@ def reml_two_way(table, tol=1e-10):
         return {"s2_p": np.nan, "s2_s": np.nan, "s2_e": np.nan, "sd_p": np.nan, "sd_s": np.nan, "sd_e": np.nan,
                 "boundary_p": None, "boundary_s": None, "converged": False, "llf": np.nan}
     names = list(best.model.exog_vc.names)
-    vc = dict(zip(names, np.asarray(best.vcomp, dtype=float) * best.scale))  # vcomp is relative to scale
+    # MixedLMResults.vcomp is already on the data scale (statsmodels multiplies the unscaled
+    # parameters by `scale` when building the results object); do NOT rescale again.
+    vc = dict(zip(names, np.asarray(best.vcomp, dtype=float)))
     s2p, s2s, s2e = float(vc["p"]), float(vc["s"]), float(best.scale)
     return {"s2_p": s2p, "s2_s": s2s, "s2_e": s2e,
             "sd_p": np.sqrt(max(s2p, 0)), "sd_s": np.sqrt(max(s2s, 0)), "sd_e": np.sqrt(s2e),
@@ -181,7 +183,13 @@ def tier_between_share(row_means, tiers):
 
 def tier_permutation_test(row_means, tiers):
     """Exact permutation test over all distinct assignments of the tier multiset to the 6 partitions.
-    p = fraction of labellings whose between-tier share >= observed (observed included)."""
+    p = fraction of labellings whose between-tier share >= observed (observed included).
+
+    NOTE (design limitation, recorded as preregistration amendment 1): the between-tier share
+    depends only on how the six partitions are paired, not on which tier name each pair carries,
+    so the 90 labellings collapse to 15 distinct pairings (each 6 times). The smallest achievable
+    p-value is therefore 1/15 = 0.067 and this test can never reject at alpha = 0.05. It is
+    reported as an exact p-value with its floor, alongside effect sizes."""
     y = np.asarray(row_means, float)
     tiers = list(tiers)
     obs = tier_between_share(y, tiers)
@@ -192,7 +200,10 @@ def tier_permutation_test(row_means, tiers):
         seen.add(perm)
         shares.append(tier_between_share(y, perm))
     shares = np.asarray(shares)
+    n_distinct = len(set(np.round(shares, 12)))
     return {"observed_share": float(obs), "n_labellings": int(len(shares)),
+            "n_distinct_pairings": 15, "n_distinct_share_values": int(n_distinct),
+            "min_achievable_p": 1.0 / 15,
             "p_value": float(np.mean(shares >= obs - 1e-12)), "null_mean_share": float(shares.mean())}
 
 
@@ -245,3 +256,24 @@ def min_detectable_sd_p(s2_e, P=6, S=3, alpha=0.05, power=0.8):
     while pw(hi) < power and hi < 1e3:
         hi *= 2
     return float(optimize.brentq(lambda x: pw(x) - power, 0.0, hi))
+
+
+def power_ratio_sim(sd_seed_A, sd_e_B, sd_s_B, sd_p_grid, P=6, S=3, nA=10, n_sim=200, n_boot=300, rng=None):
+    """Power of the *preregistered headline procedure* (6.4: operator/seed joint bootstrap, decide
+    R > 1 if the 95% percentile interval excludes 1) by simulation.
+
+    For each candidate partition SD in sd_p_grid, simulate an Arm A vector (nA seeds, total SD
+    sd_seed_A) and an Arm B table (partition SD = candidate, seed SD sd_s_B, residual SD sd_e_B),
+    run bootstrap_ratio, and record whether ci_low > 1. Returns {sd_p: power}. Also returns the
+    implied true ratio sd_p / sd_seed_A for each grid point so the result reads as power vs R."""
+    rng = np.random.default_rng(rng)
+    out = {}
+    for sd_p in sd_p_grid:
+        hits = 0
+        for _ in range(n_sim):
+            A = rng.normal(0.5, sd_seed_A, nA)
+            B = 0.5 + rng.normal(0, sd_p, P)[:, None] + rng.normal(0, sd_s_B, S)[None, :] + rng.normal(0, sd_e_B, (P, S))
+            r = bootstrap_ratio(B, A, n_boot=n_boot, rng=rng)
+            hits += r["ci_low"] > 1.0
+        out[float(sd_p)] = {"power": hits / n_sim, "true_R": float(sd_p / sd_seed_A) if sd_seed_A > 0 else np.inf}
+    return out
