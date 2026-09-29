@@ -1,0 +1,13 @@
+# large / regenerable artifacts stay on WSL native storage (~/ova)
+*.hdf5
+*.h5
+*.pth
+*.pt
+runs/
+logs/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+*.log
+# scratch
+tmp/
