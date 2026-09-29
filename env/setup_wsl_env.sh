@@ -25,9 +25,10 @@ fi
 source "$OVA/venv/bin/activate"
 
 # ---- pins (input) ----
-uv pip install --index-url https://download.pytorch.org/whl/cu128 \
+retry() { for i in 1 2 3 4 5; do "$@" && return 0; echo "attempt $i failed; retrying in 20s"; sleep 20; done; return 1; }
+retry uv pip install --index-url https://download.pytorch.org/whl/cu128 \
   torch==2.8.0 torchvision==0.23.0
-uv pip install \
+retry uv pip install \
   numpy==1.26.4 \
   mujoco==3.2.6 \
   robosuite==1.5.1 \
