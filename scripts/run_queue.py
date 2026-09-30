@@ -97,19 +97,39 @@ def touch(path):
 def execute(run, run_dir, epochs, n_eval):
     t0 = time.time()
     train_dir = os.path.join(run_dir, "train")
-    if os.path.exists(train_dir):
-        shutil.rmtree(train_dir)  # never resume a half-finished run; retrain deterministically from scratch
-    cfg_path = make_config(run, run_dir, epochs)
     lock = os.path.join(run_dir, ".lock")
-    with open(os.path.join(run_dir, "train_stdout.txt"), "w") as log:
-        proc = subprocess.Popen([sys.executable, ROBOMIMIC_TRAIN, "--config", cfg_path],
-                                stdout=log, stderr=subprocess.STDOUT, cwd=REPO)
-        while proc.poll() is None:
-            time.sleep(60); touch(lock)  # heartbeat so the lock never looks stale while training
-    if proc.returncode != 0:
-        raise RuntimeError(f"train.py exited {proc.returncode} for {run['run_id']}")
+    ckpt_glob = os.path.join(train_dir, run["run_id"], "*", "models", f"model_epoch_{epochs}.pth")
+
+    def loadable(path):
+        try:
+            import torch
+            torch.load(path, map_location="cpu", weights_only=False)
+            return True
+        except Exception:
+            return False
+
+    existing = [c for c in glob.glob(ckpt_glob) if loadable(c)]
+    train_reused = False
+    if len(existing) == 1 and os.path.exists(os.path.join(run_dir, "train_stdout.txt")) and \
+            "finished run successfully" in open(os.path.join(run_dir, "train_stdout.txt"), errors="ignore").read():
+        # Training finished before a worker was killed (e.g. WSL shutdown) but eval did not run:
+        # reuse the completed final checkpoint instead of retraining. Training is deterministic
+        # given the seed, so this changes nothing about the result.
+        train_reused = True
+        print(f"reusing completed final checkpoint for {run['run_id']}", flush=True)
+    else:
+        if os.path.exists(train_dir):
+            shutil.rmtree(train_dir)  # never resume a half-finished run; retrain deterministically from scratch
+        cfg_path = make_config(run, run_dir, epochs)
+        with open(os.path.join(run_dir, "train_stdout.txt"), "w") as log:
+            proc = subprocess.Popen([sys.executable, ROBOMIMIC_TRAIN, "--config", cfg_path],
+                                    stdout=log, stderr=subprocess.STDOUT, cwd=REPO)
+            while proc.poll() is None:
+                time.sleep(60); touch(lock)  # heartbeat so the lock never looks stale while training
+        if proc.returncode != 0:
+            raise RuntimeError(f"train.py exited {proc.returncode} for {run['run_id']}")
     t_train = time.time() - t0
-    ckpts = glob.glob(os.path.join(train_dir, run["run_id"], "*", "models", f"model_epoch_{epochs}.pth"))
+    ckpts = glob.glob(ckpt_glob)
     if len(ckpts) != 1:
         raise RuntimeError(f"expected exactly one final checkpoint, found {ckpts}")
     ckpt = ckpts[0]
@@ -128,7 +148,7 @@ def execute(run, run_dir, epochs, n_eval):
     with open(os.path.join(eval_dir, "metrics.json")) as fh:
         m = json.load(fh)
     info = dict(run)
-    info.update({"epochs": epochs, "train_seconds": t_train, "eval_seconds": t_eval,
+    info.update({"epochs": epochs, "train_seconds": t_train, "train_reused": train_reused, "eval_seconds": t_eval,
                  "success_rate": m["success_rate"], "n_rollouts": m["n_rollouts"],
                  "ckpt_sha256": m["ckpt_sha256"], "git_commit": git_commit(),
                  "finished": datetime.datetime.now().isoformat()})
