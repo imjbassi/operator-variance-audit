@@ -76,9 +76,12 @@ def reml_two_way(table, tol=1e-10):
     # parameters by `scale` when building the results object); do NOT rescale again.
     vc = dict(zip(names, np.asarray(best.vcomp, dtype=float)))
     s2p, s2s, s2e = float(vc["p"]), float(vc["s"]), float(best.scale)
+    # Boundary: REML pins a component at (numerically) zero. Use an absolute SD threshold of
+    # 1e-3 (0.1 percentage point of success rate) so that a 0.000 estimate is flagged as such.
+    sd_tol = 1e-3
     return {"s2_p": s2p, "s2_s": s2s, "s2_e": s2e,
             "sd_p": np.sqrt(max(s2p, 0)), "sd_s": np.sqrt(max(s2s, 0)), "sd_e": np.sqrt(s2e),
-            "boundary_p": s2p <= tol * max(s2e, 1e-12), "boundary_s": s2s <= tol * max(s2e, 1e-12),
+            "boundary_p": bool(np.sqrt(max(s2p, 0)) < sd_tol), "boundary_s": bool(np.sqrt(max(s2s, 0)) < sd_tol),
             "converged": bool(best.converged), "llf": float(best.llf)}
 
 

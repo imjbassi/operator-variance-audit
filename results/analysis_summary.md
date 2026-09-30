@@ -7,19 +7,128 @@ Binomial SD of one 50-rollout estimate at this mean: 0.015; seed SD after removi
 
 seeds 1-10: 0.96, 1.00, 1.00, 0.96, 1.00, 0.98, 0.98, 1.00, 1.00, 1.00
 
+**Arm B** 6 x 3 table (rows = held-out operator, cols = seeds 1-3)
+
+| partition | s1 | s2 | s3 | mean |
+|---|---|---|---|---|
+| B_drop_better_operator_1 | 0.98 | 0.96 | 0.96 | 0.967 |
+| B_drop_better_operator_2 | 0.96 | 1.00 | 0.98 | 0.980 |
+| B_drop_okay_operator_1 | 0.98 | 1.00 | 1.00 | 0.993 |
+| B_drop_okay_operator_2 | 1.00 | 1.00 | 1.00 | 1.000 |
+| B_drop_worse_operator_1 | 1.00 | 0.96 | 0.96 | 0.973 |
+| B_drop_worse_operator_2 | 1.00 | 1.00 | 1.00 | 1.000 |
+
+MoM : SD_partition 0.011, SD_seed 0.000 (BOUNDARY), SD_resid 0.015; F-test p(partition) 0.094, p(seed) 0.911
+REML: SD_partition 0.012, SD_seed 0.000, SD_resid 0.014; converged=True
+Estimators disagree materially: partition=False, seed=True
+
+Within-B ratio SD_p/SD_s = inf
+Tier: between-tier share 0.54 (null mean 0.40), exact permutation p = 0.467 (floor 1/15 = 0.067; cannot reject at 0.05 by design, see Amendment 1a); within-tier mean |diff| 0.016 vs between-tier 0.018
+Minimum detectable SD_partition (F-test, alpha 0.05, power 0.8): 0.022
+
+Power of the preregistered headline procedure (P(interval excludes 1)) at fitted nuisance SDs:
+
+| true SD_partition | true R | power |
+|---|---|---|
+| 0.017 | 1.00 | 0.01 |
+| 0.025 | 1.50 | 0.04 |
+| 0.034 | 2.00 | 0.17 |
+| 0.051 | 3.00 | 0.38 |
+| 0.068 | 4.00 | 0.60 |
+
+**Headline R = SD_partition(B) / SD_seed(A)**: MoM 0.66 [0.00, 1.35] (one-sided p(R<=1) = 0.898; 6% of resamples at boundary); REML 0.69 [0.00, 1.30]
+
 ## can
 
-**Arm A** (10 seeds, 300 demos): mean 0.946, seed SD 0.023 [0.000, 0.029], range 0.90-0.96
+**Arm A** (10 seeds, 300 demos): mean 0.946, seed SD 0.023 [0.013, 0.029], range 0.90-0.96
 Binomial SD of one 50-rollout estimate at this mean: 0.032; seed SD after removing that floor in quadrature: 0.000 (descriptive only)
 
 seeds 1-10: 0.96, 0.92, 0.96, 0.96, 0.92, 0.96, 0.96, 0.96, 0.90, 0.96
 
+**Arm B** 6 x 3 table (rows = held-out operator, cols = seeds 1-3)
+
+| partition | s1 | s2 | s3 | mean |
+|---|---|---|---|---|
+| B_drop_better_operator_1 | 0.90 | 0.84 | 0.98 | 0.907 |
+| B_drop_better_operator_2 | 0.88 | 0.84 | 0.94 | 0.887 |
+| B_drop_okay_operator_1 | 0.88 | 1.00 | 0.98 | 0.953 |
+| B_drop_okay_operator_2 | 0.94 | 0.92 | 0.96 | 0.940 |
+| B_drop_worse_operator_1 | 0.88 | 0.94 | 0.96 | 0.927 |
+| B_drop_worse_operator_2 | 1.00 | 0.90 | 0.96 | 0.953 |
+
+MoM : SD_partition 0.004, SD_seed 0.025, SD_resid 0.046; F-test p(partition) 0.453, p(seed) 0.113
+REML: SD_partition 0.004, SD_seed 0.025, SD_resid 0.046; converged=True
+Estimators disagree materially: partition=False, seed=False
+
+Within-B ratio SD_p/SD_s = 0.17
+Tier: between-tier share 0.82 (null mean 0.40), exact permutation p = 0.200 (floor 1/15 = 0.067; cannot reject at 0.05 by design, see Amendment 1a); within-tier mean |diff| 0.020 vs between-tier 0.036
+Minimum detectable SD_partition (F-test, alpha 0.05, power 0.8): 0.066
+
+Power of the preregistered headline procedure (P(interval excludes 1)) at fitted nuisance SDs:
+
+| true SD_partition | true R | power |
+|---|---|---|
+| 0.023 | 1.00 | 0.01 |
+| 0.035 | 1.50 | 0.04 |
+| 0.046 | 2.00 | 0.04 |
+| 0.070 | 3.00 | 0.24 |
+| 0.093 | 4.00 | 0.49 |
+
+**Headline R = SD_partition(B) / SD_seed(A)**: MoM 0.18 [0.00, 1.71] (one-sided p(R<=1) = 0.880; 45% of resamples at boundary); REML 0.18 [0.00, 1928204216.67]
+
 ## square
 
-**Arm A** (10 seeds, 300 demos): mean 0.600, seed SD 0.079 [0.042, 0.096], range 0.50-0.72
+**Arm A** (10 seeds, 300 demos): mean 0.600, seed SD 0.079 [0.044, 0.097], range 0.50-0.72
 Binomial SD of one 50-rollout estimate at this mean: 0.069; seed SD after removing that floor in quadrature: 0.039 (descriptive only)
 
 seeds 1-10: 0.56, 0.60, 0.60, 0.60, 0.66, 0.72, 0.52, 0.72, 0.50, 0.52
+
+**Arm B** 6 x 3 table (rows = held-out operator, cols = seeds 1-3)
+
+| partition | s1 | s2 | s3 | mean |
+|---|---|---|---|---|
+| B_drop_better_operator_1 | 0.46 | 0.48 | 0.54 | 0.493 |
+| B_drop_better_operator_2 | 0.42 | 0.44 | 0.50 | 0.453 |
+| B_drop_okay_operator_1 | 0.68 | 0.54 | 0.64 | 0.620 |
+| B_drop_okay_operator_2 | 0.70 | 0.60 | 0.74 | 0.680 |
+| B_drop_worse_operator_1 | 0.76 | 0.60 | 0.58 | 0.647 |
+| B_drop_worse_operator_2 | 0.66 | 0.62 | 0.62 | 0.633 |
+
+MoM : SD_partition 0.086, SD_seed 0.027, SD_resid 0.057; F-test p(partition) 0.003, p(seed) 0.144
+REML: SD_partition 0.086, SD_seed 0.027, SD_resid 0.057; converged=True
+Estimators disagree materially: partition=False, seed=False
+
+Within-B ratio SD_p/SD_s = 3.13
+Tier: between-tier share 0.94 (null mean 0.40), exact permutation p = 0.200 (floor 1/15 = 0.067; cannot reject at 0.05 by design, see Amendment 1a); within-tier mean |diff| 0.038 vs between-tier 0.124
+Minimum detectable SD_partition (F-test, alpha 0.05, power 0.8): 0.083
+
+Power of the preregistered headline procedure (P(interval excludes 1)) at fitted nuisance SDs:
+
+| true SD_partition | true R | power |
+|---|---|---|
+| 0.079 | 1.00 | 0.01 |
+| 0.119 | 1.50 | 0.04 |
+| 0.159 | 2.00 | 0.14 |
+| 0.238 | 3.00 | 0.42 |
+| 0.318 | 4.00 | 0.62 |
+
+**Headline R = SD_partition(B) / SD_seed(A)**: MoM 1.08 [0.00, 1.94] (one-sided p(R<=1) = 0.440; 7% of resamples at boundary); REML 1.08 [0.00, 1.84]
+
+## Holm-Bonferroni: primary family
+
+| contrast | p raw | p Holm |
+|---|---|---|
+| lift:R>1 | 0.8980 | 1.0000 |
+| can:R>1 | 0.8800 | 1.0000 |
+| square:R>1 | 0.4395 | 1.0000 |
+
+## Holm-Bonferroni: secondary family
+
+| contrast | p raw | p Holm |
+|---|---|---|
+| lift:tier | 0.4667 | 0.6000 |
+| can:tier | 0.2000 | 0.6000 |
+| square:tier | 0.2000 | 0.6000 |
 
 
 Zero variance estimates marked BOUNDARY are boundary estimates, not evidence of zero variance.
