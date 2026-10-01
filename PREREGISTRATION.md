@@ -226,3 +226,53 @@ together with this curve rather than as evidence of a small effect.
 
 (c) Code fix, not a design change: the REML wrapper double-scaled the
 variance components; corrected before any data were analysed.
+
+**Amendment 2 (2026-10-01, written after all Stage 1 results were seen and
+before any Stage 2 rollout was run).**
+
+*Status of Stage 1.* The preregistered primary tests were not met on any task
+(Square: R = 1.08 [0.00, 1.84]; D = 0.0062 [-0.0014, 0.0107], raw one-sided
+p = 0.081, Holm 0.49). That outcome stands as the primary preregistered result
+and is reported unchanged, with the power statement of 6.6.
+
+*Motivation for Stage 2.* Stage 1 showed that the binomial noise of a
+50-rollout success estimate (SD 0.069 on Square at a 0.60 success rate) is as
+large as the quantities being compared. Stage 2 reduces that measurement
+noise without training anything new. It is a follow-up designed after seeing
+Stage 1 data; it reuses the same checkpoints and is therefore not independent
+evidence. A Stage 2 result cannot upgrade the Stage 1 outcome; it is reported
+as a follow-up whose tests were fixed, below, before its rollouts were run.
+
+*Stage 2 design (fixed now).*
+- Scope: Square only. The 46 existing final (epoch-2000) checkpoints: 10 Arm A,
+  18 Arm B, 18 Arm C. No retraining, no new task, arm, architecture, or
+  checkpoint rule.
+- Evaluation: 500 rollouts per checkpoint on 500 new fixed initial states
+  (seeded resets, seed base 300000, stored in `initial_states/square_stage2.*`
+  and committed before use), rollout RNG seed base 400000 plus rollout index,
+  identical across checkpoints. Horizon 500, terminate on success, same
+  success criterion. Binomial SD of one estimate at 0.60: about 0.022.
+- Analysis: Section 6 applied unchanged to the 500-rollout success rates:
+  Arm A seed SD; MoM and REML two-way decomposition of the Arm B and Arm C
+  6 x 3 tables; headline ratio R with the joint operator/seed bootstrap; the
+  B minus C contrast D with the partition bootstrap; tier effect sizes and the
+  exact permutation p (floor 1/15). Same decision rules: R supported if the
+  95% interval excludes 1; D supported if the interval excludes 0.
+- Multiple comparisons: the Stage 2 family is two contrasts (Square R > 1,
+  Square D > 0), Holm-Bonferroni within that family. Raw and corrected
+  reported.
+- Whatever the outcome, both stages are reported side by side.
+
+*Exploratory analyses, to be labelled as such in the paper.* (i) The headline
+ratio with the Arm A seed SD corrected for the binomial floor in quadrature;
+(ii) the exact F-tests for the partition component in the Arm B and Arm C
+tables (implemented before any data but not named in the original text);
+(iii) the tier-level contrast between partitions that drop a "better"
+operator and the rest.
+
+*Framing decision (2026-10-01).* The paper's lead contribution is what the
+data resolve: how much of the conventional 3-seed, 50-rollout uncertainty on
+MH benchmarks is evaluation noise, and what six operators can and cannot
+resolve. The original primary claim is reported as a preregistered negative
+result with its power statement. The secondary claim (P4) is reported as
+contradicted on Square.

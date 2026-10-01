@@ -1,16 +1,23 @@
-"""Generate the 50 fixed evaluation initial states for a task, once, from seeded resets.
+"""Generate fixed evaluation initial states for a task, once, from seeded resets.
 
 The environment is built from the dataset's own env metadata (same robosuite env, version,
-controller config). For rollout i, numpy's global RNG (which robosuite placement samplers use)
-is seeded with INIT_SEED_BASE + i before env.reset(); the resulting flattened MuJoCo state is
-stored. Evaluation later calls env.reset() followed by env.reset_to({"states": s_i}) so every
-checkpoint of a task sees exactly the same 50 initial states.
+controller config). For state i, numpy's global RNG (which robosuite placement samplers use)
+is seeded with seed_base + i before env.reset(); the flattened MuJoCo state AND the model XML
+are stored. Evaluation later calls env.reset() followed by
+env.reset_to({"model": xml_i, "states": s_i}) so every checkpoint of a task sees exactly the
+same initial conditions.
 
-Output: initial_states/<task>.npz  with arrays `states` (50 x state_dim) and metadata JSON.
+NOTE: robosuite >= 1.4 regenerates the MJCF on every hard reset and some tasks randomise
+geometry per episode (Lift: cube size), hence the per-state model XML.
+
+Stage 1 (preregistered): 50 states, seed base 100000  -> initial_states/<task>.npz
+Stage 2 (Amendment 2):  500 states, seed base 300000  -> initial_states/<task>_stage2.npz
+
 Refuses to overwrite (initial states are part of the frozen design).
 
 Usage:
   python scripts/gen_initial_states.py --task square --hdf5 ~/ova/datasets/pristine/square/mh/low_dim_v15.hdf5
+  python scripts/gen_initial_states.py --task square --hdf5 <...> --n 500 --seed_base 300000 --name square_stage2
 """
 import argparse, hashlib, json, os, sys
 import numpy as np
@@ -29,10 +36,14 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--task", required=True)
     ap.add_argument("--hdf5", required=True)
+    ap.add_argument("--n", type=int, default=N_STATES)
+    ap.add_argument("--seed_base", type=int, default=INIT_SEED_BASE)
+    ap.add_argument("--name", default=None, help="output basename (default: task)")
     ap.add_argument("--out_dir", default=os.path.join(HERE, "..", "initial_states"))
     a = ap.parse_args()
-    out = os.path.join(a.out_dir, f"{a.task}.npz")
-    meta_out = os.path.join(a.out_dir, f"{a.task}.json")
+    name = a.name or a.task
+    out = os.path.join(a.out_dir, f"{name}.npz")
+    meta_out = os.path.join(a.out_dir, f"{name}.json")
     if os.path.exists(out):
         print(f"REFUSING to overwrite {out}"); sys.exit(2)
 
@@ -42,25 +53,22 @@ def main():
     env_meta = FileUtils.get_env_metadata_from_dataset(dataset_path=os.path.expanduser(a.hdf5))
     env = EnvUtils.create_env_from_metadata(env_meta=env_meta, render=False, render_offscreen=False)
 
-    # NOTE: robosuite >= 1.4 regenerates the MJCF on every hard reset and some tasks randomise
-    # geometry per episode (Lift: cube size). The model XML is therefore stored per state and
-    # evaluation restores BOTH model and state (env.reset_to({"model": xml, "states": s})).
     states, models = [], []
-    for i in range(N_STATES):
-        np.random.seed(INIT_SEED_BASE + i)
+    for i in range(a.n):
+        np.random.seed(a.seed_base + i)
         env.reset()
         st = env.get_state()
         states.append(np.array(st["states"], dtype=np.float64))
         models.append(st["model"])
     states = np.stack(states)
     model_hashes = [hashlib.sha256(m.encode()).hexdigest()[:16] for m in models]
-    assert len({hashlib.sha256(s.tobytes()).hexdigest() for s in states}) == N_STATES, "duplicate initial states"
-    print(f"state dim {states.shape[1]}, distinct model xml hashes: {len(set(model_hashes))}")
+    assert len({hashlib.sha256(s.tobytes()).hexdigest() for s in states}) == a.n, "duplicate initial states"
+    print(f"{a.n} states, state dim {states.shape[1]}, distinct model xml hashes: {len(set(model_hashes))}")
 
     os.makedirs(a.out_dir, exist_ok=True)
     np.savez_compressed(out, states=states, models=np.array(models))  # unicode array, no pickle
     meta = {
-        "task": a.task, "n_states": N_STATES, "init_seed_base": INIT_SEED_BASE,
+        "task": a.task, "name": name, "n_states": a.n, "init_seed_base": a.seed_base,
         "env_name": env_meta["env_name"], "env_version": env_meta.get("env_version"),
         "source_hdf5": os.path.basename(a.hdf5),
         "states_sha256": hashlib.sha256(states.tobytes()).hexdigest(),
