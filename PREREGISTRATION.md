@@ -276,3 +276,33 @@ MH benchmarks is evaluation noise, and what six operators can and cannot
 resolve. The original primary claim is reported as a preregistered negative
 result with its power statement. The secondary claim (P4) is reported as
 contradicted on Square.
+
+**Amendment 3 (2026-10-01, after Stage 2 results; a record of outcome and two
+reporting corrections, no new experiment).**
+
+(a) *Stage 2 outcome, Square, 500 rollouts per checkpoint.* Arm A seed SD
+0.031 [0.017, 0.039]. Partition SD 0.054 in Arm B and 0.014 in Arm C (MoM and
+REML agree). R = 1.71 [0.51, 2.96], one-sided p = 0.115: not supported.
+D = 0.0027 [0.0000, 0.0051], one-sided p = 0.0245, Holm 0.049 with the
+preregistered 2,000 resamples.
+
+(b) *Exact bootstrap added because (a) is at the decision boundary.* The
+bootstrap distributions of 6.4 and 6.5 have few distinct resamples (462
+multisets of six partitions, 92,378 multisets of ten seeds), so they were
+enumerated exactly (`analysis/exact_bootstrap.py`). Same statistic, same
+resampling scheme, no Monte Carlo error. Exact Stage 2 values: D interval
+[-0.00000, 0.00523], p = 0.0251, Holm 0.0501. The 2,000-resample result and
+the exact result fall on opposite sides of 0.05 by less than 0.002. Decision:
+the B minus C contrast is reported as *at the boundary and not established*.
+Both sets of numbers are reported for both stages. This is the conservative
+reading and is adopted because the two computations disagree on the decision.
+
+(c) *Correction to the framing statement in Amendment 2.* Amendment 2 said
+P4 would be reported as contradicted on Square, based on Stage 1 effect sizes
+(between-tier share 0.94). At 500 rollouts the between-tier share is 0.43
+against a null mean of 0.40, and the within-tier mean absolute difference
+(0.075) is as large as the between-tier one (0.071). The Stage 1 tier pattern
+did not survive a tenfold increase in rollouts. P4 as literally stated
+(permutation p > 0.05) holds in both stages, trivially, because of the 1/15
+floor. The paper reports: the tier pattern seen at 50 rollouts was not
+reproduced at 500, and no tier-level claim is made in either direction.
