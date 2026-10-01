@@ -19,8 +19,8 @@ seeds 1-10: 0.96, 1.00, 1.00, 0.96, 1.00, 0.98, 0.98, 1.00, 1.00, 1.00
 | B_drop_worse_operator_2 | 1.00 | 1.00 | 1.00 | 1.000 |
 
 MoM : SD_partition 0.011, SD_seed 0.000 (BOUNDARY), SD_resid 0.015; F-test p(partition) 0.094, p(seed) 0.911
-REML: SD_partition 0.012, SD_seed 0.000, SD_resid 0.014; converged=True
-Estimators disagree materially: partition=False, seed=True
+REML: SD_partition 0.012, SD_seed 0.000 (BOUNDARY), SD_resid 0.014; converged=True
+Estimators disagree materially: partition=False, seed=False
 
 Within-B ratio SD_p/SD_s = inf
 Tier: between-tier share 0.54 (null mean 0.40), exact permutation p = 0.467 (floor 1/15 = 0.067; cannot reject at 0.05 by design, see Amendment 1a); within-tier mean |diff| 0.016 vs between-tier 0.018
@@ -36,11 +36,28 @@ Power of the preregistered headline procedure (P(interval excludes 1)) at fitted
 | 0.051 | 3.00 | 0.38 |
 | 0.068 | 4.00 | 0.60 |
 
+**Arm C** 6 x 3 table (rows = random draw, cols = seeds 1-3)
+
+| partition | s1 | s2 | s3 | mean |
+|---|---|---|---|---|
+| C_rand_1 | 0.96 | 0.82 | 1.00 | 0.927 |
+| C_rand_2 | 1.00 | 0.96 | 0.94 | 0.967 |
+| C_rand_3 | 0.98 | 1.00 | 1.00 | 0.993 |
+| C_rand_4 | 0.98 | 1.00 | 1.00 | 0.993 |
+| C_rand_5 | 1.00 | 0.96 | 0.96 | 0.973 |
+| C_rand_6 | 0.96 | 0.98 | 1.00 | 0.980 |
+
+MoM : SD_partition 0.000 (BOUNDARY), SD_seed 0.000 (BOUNDARY), SD_resid 0.043; F-test p(partition) 0.479, p(seed) 0.453
+REML: SD_partition 0.000 (BOUNDARY), SD_seed 0.000 (BOUNDARY), SD_resid 0.043; converged=True
+Estimators disagree materially: partition=False, seed=False
+
 **Headline R = SD_partition(B) / SD_seed(A)**: MoM 0.66 [0.00, 1.35] (one-sided p(R<=1) = 0.898; 6% of resamples at boundary); REML 0.69 [0.00, 1.30]
+
+**B minus C**: D = s2_p(B) - s2_p(C) = 0.0001 [-0.0002, 0.0002] (SD_p B 0.011 vs C 0.000; one-sided p(D<=0) = 0.188)
 
 ## can
 
-**Arm A** (10 seeds, 300 demos): mean 0.946, seed SD 0.023 [0.013, 0.029], range 0.90-0.96
+**Arm A** (10 seeds, 300 demos): mean 0.946, seed SD 0.023 [0.000, 0.029], range 0.90-0.96
 Binomial SD of one 50-rollout estimate at this mean: 0.032; seed SD after removing that floor in quadrature: 0.000 (descriptive only)
 
 seeds 1-10: 0.96, 0.92, 0.96, 0.96, 0.92, 0.96, 0.96, 0.96, 0.90, 0.96
@@ -68,17 +85,34 @@ Power of the preregistered headline procedure (P(interval excludes 1)) at fitted
 
 | true SD_partition | true R | power |
 |---|---|---|
-| 0.023 | 1.00 | 0.01 |
+| 0.023 | 1.00 | 0.00 |
 | 0.035 | 1.50 | 0.04 |
 | 0.046 | 2.00 | 0.04 |
-| 0.070 | 3.00 | 0.24 |
-| 0.093 | 4.00 | 0.49 |
+| 0.070 | 3.00 | 0.32 |
+| 0.093 | 4.00 | 0.46 |
 
-**Headline R = SD_partition(B) / SD_seed(A)**: MoM 0.18 [0.00, 1.71] (one-sided p(R<=1) = 0.880; 45% of resamples at boundary); REML 0.18 [0.00, 1928204216.67]
+**Arm C** 6 x 3 table (rows = random draw, cols = seeds 1-3)
+
+| partition | s1 | s2 | s3 | mean |
+|---|---|---|---|---|
+| C_rand_1 | 0.78 | 0.92 | 0.96 | 0.887 |
+| C_rand_2 | 0.90 | 0.94 | 0.96 | 0.933 |
+| C_rand_3 | 0.96 | 0.96 | 0.96 | 0.960 |
+| C_rand_4 | 0.90 | 0.86 | 0.82 | 0.860 |
+| C_rand_5 | 0.92 | 0.92 | 0.92 | 0.920 |
+| C_rand_6 | 0.92 | 0.92 | 0.94 | 0.927 |
+
+MoM : SD_partition 0.024, SD_seed 0.000 (BOUNDARY), SD_resid 0.045; F-test p(partition) 0.184, p(seed) 0.503
+REML: SD_partition 0.025, SD_seed 0.000 (BOUNDARY), SD_resid 0.044; converged=True
+Estimators disagree materially: partition=False, seed=False
+
+**Headline R = SD_partition(B) / SD_seed(A)**: MoM 0.18 [0.00, 1.64] (one-sided p(R<=1) = 0.890; 47% of resamples at boundary); REML 0.18 [0.00, 1.69]
+
+**B minus C**: D = s2_p(B) - s2_p(C) = -0.0006 [-0.0017, 0.0004] (SD_p B 0.004 vs C 0.024; one-sided p(D<=0) = 0.801)
 
 ## square
 
-**Arm A** (10 seeds, 300 demos): mean 0.600, seed SD 0.079 [0.044, 0.097], range 0.50-0.72
+**Arm A** (10 seeds, 300 demos): mean 0.600, seed SD 0.079 [0.044, 0.096], range 0.50-0.72
 Binomial SD of one 50-rollout estimate at this mean: 0.069; seed SD after removing that floor in quadrature: 0.039 (descriptive only)
 
 seeds 1-10: 0.56, 0.60, 0.60, 0.60, 0.66, 0.72, 0.52, 0.72, 0.50, 0.52
@@ -107,20 +141,40 @@ Power of the preregistered headline procedure (P(interval excludes 1)) at fitted
 | true SD_partition | true R | power |
 |---|---|---|
 | 0.079 | 1.00 | 0.01 |
-| 0.119 | 1.50 | 0.04 |
-| 0.159 | 2.00 | 0.14 |
-| 0.238 | 3.00 | 0.42 |
-| 0.318 | 4.00 | 0.62 |
+| 0.119 | 1.50 | 0.05 |
+| 0.159 | 2.00 | 0.18 |
+| 0.238 | 3.00 | 0.41 |
+| 0.318 | 4.00 | 0.67 |
 
-**Headline R = SD_partition(B) / SD_seed(A)**: MoM 1.08 [0.00, 1.94] (one-sided p(R<=1) = 0.440; 7% of resamples at boundary); REML 1.08 [0.00, 1.84]
+**Arm C** 6 x 3 table (rows = random draw, cols = seeds 1-3)
+
+| partition | s1 | s2 | s3 | mean |
+|---|---|---|---|---|
+| C_rand_1 | 0.58 | 0.70 | 0.62 | 0.633 |
+| C_rand_2 | 0.70 | 0.66 | 0.62 | 0.660 |
+| C_rand_3 | 0.50 | 0.52 | 0.58 | 0.533 |
+| C_rand_4 | 0.58 | 0.64 | 0.62 | 0.613 |
+| C_rand_5 | 0.54 | 0.70 | 0.64 | 0.627 |
+| C_rand_6 | 0.62 | 0.56 | 0.58 | 0.587 |
+
+MoM : SD_partition 0.033, SD_seed 0.007, SD_resid 0.050; F-test p(partition) 0.121, p(seed) 0.365
+REML: SD_partition 0.033, SD_seed 0.007, SD_resid 0.050; converged=True
+Estimators disagree materially: partition=False, seed=False
+
+**Headline R = SD_partition(B) / SD_seed(A)**: MoM 1.08 [0.00, 1.84] (one-sided p(R<=1) = 0.442; 8% of resamples at boundary); REML 1.08 [0.00, 1.92]
+
+**B minus C**: D = s2_p(B) - s2_p(C) = 0.0062 [-0.0014, 0.0107] (SD_p B 0.086 vs C 0.033; one-sided p(D<=0) = 0.081)
 
 ## Holm-Bonferroni: primary family
 
 | contrast | p raw | p Holm |
 |---|---|---|
 | lift:R>1 | 0.8980 | 1.0000 |
-| can:R>1 | 0.8800 | 1.0000 |
-| square:R>1 | 0.4395 | 1.0000 |
+| lift:D>0 | 0.1880 | 0.9400 |
+| can:R>1 | 0.8905 | 1.0000 |
+| can:D>0 | 0.8010 | 1.0000 |
+| square:R>1 | 0.4420 | 1.0000 |
+| square:D>0 | 0.0810 | 0.4860 |
 
 ## Holm-Bonferroni: secondary family
 
