@@ -11,3 +11,8 @@ __pycache__/
 *.log
 # scratch
 tmp/
+# LaTeX build products (the PDF itself is committed)
+paper/*.aux
+paper/*.blg
+paper/*.out
+paper/*.bbl

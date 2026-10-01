@@ -72,7 +72,7 @@ def arm_panel(ax, df, task, n_roll, show_xlabels=True):
             ax.plot([x - 0.36, x + 0.36], [row.mean()] * 2, color=INK, linewidth=1.1, zorder=4, solid_capstyle="butt")
     ax.set_xlim(-0.8, 16.4)
     ax.set_xticks(list(xB))   # only Arm B partitions are named; Arm C draws are exchangeable
-    ax.set_xticklabels(OP_SHORT if show_xlabels else [""] * 6, fontsize=5.8)
+    ax.set_xticklabels(OP_SHORT if show_xlabels else [""] * 6, fontsize=5.2)
     ax.tick_params(axis="x", length=0, pad=2)
     for x in (0.85, 10.3):
         ax.axvline(x, color=GRID, linewidth=0.6, zorder=0)
