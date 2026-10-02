@@ -1,5 +1,7 @@
 # Operator-Composition Variance in robomimic Multi-Human Benchmarks
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23109850.svg)](https://doi.org/10.5281/zenodo.23109850)
+
 A preregistered audit of how the uncertainty reported on the robomimic Multi-Human (MH)
 benchmarks decomposes: training seed, which demonstrations are in the training set, which
 operators are in the training set, and evaluation (rollout) noise.
@@ -76,6 +78,12 @@ committed. Hardware used: one RTX 4070 (12 GB), WSL2.
   builds without a TeX package install. The robomimic datasets are not redistributed here.
 
 ## Citing
+
+Archived on Zenodo. Version 1.0.0: [10.5281/zenodo.23109851](https://doi.org/10.5281/zenodo.23109851).
+All versions (always resolves to the latest): [10.5281/zenodo.23109850](https://doi.org/10.5281/zenodo.23109850).
+
+> Bassi, J. (2026). *Operator-Composition Variance in robomimic Multi-Human Benchmarks:
+> preregistration, code, and results* (v1.0.0). Zenodo. https://doi.org/10.5281/zenodo.23109851
 
 Citation metadata is in `CITATION.cff`; `.zenodo.json` carries the same metadata for the Zenodo
 archive. `python analysis/audit_claims.py` mechanically re-checks the

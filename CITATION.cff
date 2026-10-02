@@ -8,6 +8,14 @@ authors:
     email: jaiveerbassi@yahoo.com
     affiliation: Independent Researcher
 repository-code: "https://github.com/imjbassi/operator-variance-audit"
+doi: 10.5281/zenodo.23109851
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.23109850
+    description: "Concept DOI: all versions, resolves to the latest"
+  - type: doi
+    value: 10.5281/zenodo.23109851
+    description: "Version 1.0.0"
 version: "1.0.0"
 date-released: "2026-10-02"
 license: MIT

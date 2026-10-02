@@ -30,7 +30,7 @@
 
 \author{Jaiveer Bassi%
 \thanks{J. Bassi is an independent researcher (e-mail: jaiveerbassi@yahoo.com).}%
-\thanks{Code, preregistration, partitions, initial states, per-run and per-rollout results: \protect\url{https://github.com/imjbassi/operator-variance-audit}.}}
+\thanks{Code, preregistration, partitions, initial states, per-run and per-rollout results: \protect\url{https://github.com/imjbassi/operator-variance-audit}, archived at \protect\url{https://doi.org/10.5281/zenodo.23109851}.}}
 
 \maketitle
 
@@ -218,7 +218,7 @@ Six operators per task is the binding limitation; it sets the power of every ope
 We preregistered the claim that operator composition contributes more variance than training seed on the robomimic Multi-Human benchmarks, ran 138 training runs with a matched random control, and did not confirm it. The experiment was underpowered for that claim by the number of operators, not by compute. It was well powered for a different conclusion: the conventional three-seed, 50-rollout statistic mostly measures evaluation noise on Lift and Can, cannot resolve differences smaller than about \OneSqMDD{} points on Square, and was sufficient to produce a tier pattern that a tenfold larger evaluation did not reproduce. Reporting practice on these benchmarks should change accordingly, and the operator question should be revisited on data with more demonstrators.
 
 \section*{Reproducibility}
-The repository contains the preregistration and amendments with their commit history, the pinned environment, dataset checksums, the immutable partition files, the stored initial conditions, the training and evaluation queue, per-run and per-rollout CSV files for both stages (6{,}900 and 23{,}000 rollouts), and the scripts that regenerate every number, table and figure in this paper from those files.
+The repository, archived as version 1.0.0 at \url{https://doi.org/10.5281/zenodo.23109851}, contains the preregistration and amendments with their commit history, the pinned environment, dataset checksums, the immutable partition files, the stored initial conditions, the training and evaluation queue, per-run and per-rollout CSV files for both stages (6{,}900 and 23{,}000 rollouts), and the scripts that regenerate every number, table and figure in this paper from those files.
 
 \IfFileExists{IEEEtran.bst}{\bibliographystyle{IEEEtran}}{\bibliographystyle{unsrt}}
 \bibliography{refs}
