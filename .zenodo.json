@@ -1,0 +1,34 @@
+{
+  "title": "Operator-Composition Variance in robomimic Multi-Human Benchmarks: preregistration, code, and results",
+  "upload_type": "software",
+  "description": "<p>Preregistered audit of how the uncertainty reported on the robomimic Multi-Human (MH) benchmarks decomposes into training seed, demonstration resampling, operator composition, and rollout noise.</p><p>Contents: the preregistration with three dated amendments; the pinned environment and dataset checksums; immutable partition files; fixed evaluation initial conditions; the training and evaluation queues; per-run and per-rollout results for 138 BC-RNN runs (6,900 rollouts) and a 500-rollout re-evaluation of 46 Square checkpoints (23,000 rollouts); and the scripts that regenerate every number, table and figure in the accompanying paper.</p><p>Outcome: the preregistered claim that operator-composition variance exceeds seed variance was not supported on any task. The data show that the conventional three-seed, 50-rollout statistic is dominated by rollout noise on Lift and Can and cannot resolve differences below about 13 points on Square.</p>",
+  "creators": [
+    {
+      "name": "Bassi, Jaiveer",
+      "affiliation": "Independent Researcher"
+    }
+  ],
+  "keywords": [
+    "imitation learning",
+    "robomimic",
+    "benchmarking",
+    "reproducibility",
+    "variance components",
+    "preregistration",
+    "robot learning"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/imjbassi/operator-variance-audit",
+      "relation": "isSupplementTo",
+      "scheme": "url"
+    },
+    {
+      "identifier": "arXiv:2108.03298",
+      "relation": "references",
+      "scheme": "arxiv"
+    }
+  ],
+  "access_right": "open",
+  "version": "1.0.0"
+}

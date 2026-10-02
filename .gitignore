@@ -11,6 +11,8 @@ __pycache__/
 *.log
 # scratch
 tmp/
+# release archives built for Zenodo
+dist/
 # LaTeX build products (the PDF itself is committed)
 paper/*.aux
 paper/*.blg

@@ -1,0 +1,27 @@
+cff-version: 1.2.0
+message: "If you use this code or these results, please cite them as below."
+title: "Operator-Composition Variance in robomimic Multi-Human Benchmarks: preregistration, code, and results"
+type: software
+authors:
+  - family-names: Bassi
+    given-names: Jaiveer
+    email: jaiveerbassi@yahoo.com
+    affiliation: Independent Researcher
+repository-code: "https://github.com/imjbassi/operator-variance-audit"
+version: "1.0.0"
+date-released: "2026-10-01"
+keywords:
+  - imitation learning
+  - robomimic
+  - benchmarking
+  - reproducibility
+  - variance components
+  - preregistration
+abstract: >-
+  Preregistered audit of how the uncertainty reported on the robomimic Multi-Human benchmarks
+  decomposes into training seed, demonstration resampling, operator composition, and rollout
+  noise. Contains the preregistration with dated amendments, the pinned environment, immutable
+  partition files, fixed evaluation initial conditions, the training and evaluation queues,
+  per-run and per-rollout results for 138 BC-RNN runs (6,900 rollouts) and a 500-rollout
+  re-evaluation of 46 Square checkpoints (23,000 rollouts), and the scripts that regenerate
+  every number, table and figure in the accompanying paper.

@@ -65,6 +65,14 @@ python scripts/collect_results.py && python scripts/collect_stage2.py
 Datasets, checkpoints and per-run logs live on native WSL storage under `~/ova/` and are not
 committed. Hardware used: one RTX 4070 (12 GB), WSL2.
 
+## Citing and third-party files
+
+Citation metadata is in `CITATION.cff`; `.zenodo.json` carries the same metadata for a Zenodo
+deposit. `paper/IEEEtran.cls` and `paper/IEEEtran.bst` (Michael Shell, V1.8b / 1.14) are
+redistributed unmodified from CTAN under the LaTeX Project Public License so the paper builds
+without a TeX package install. `python analysis/audit_claims.py` mechanically re-checks the
+hand-written quantitative statements in the paper against the result files.
+
 ## Compute notes
 
 During the grid the Microsoft Store auto-updated the WSL package twice and terminated the VM. No
