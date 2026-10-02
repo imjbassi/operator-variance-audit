@@ -65,12 +65,20 @@ python scripts/collect_results.py && python scripts/collect_stage2.py
 Datasets, checkpoints and per-run logs live on native WSL storage under `~/ova/` and are not
 committed. Hardware used: one RTX 4070 (12 GB), WSL2.
 
-## Citing and third-party files
+## License
 
-Citation metadata is in `CITATION.cff`; `.zenodo.json` carries the same metadata for a Zenodo
-deposit. `paper/IEEEtran.cls` and `paper/IEEEtran.bst` (Michael Shell, V1.8b / 1.14) are
-redistributed unmodified from CTAN under the LaTeX Project Public License so the paper builds
-without a TeX package install. `python analysis/audit_claims.py` mechanically re-checks the
+- **Code** (`scripts/`, `analysis/`, `env/`, `configs/`, `paper/build.sh`): MIT, see [LICENSE](LICENSE).
+- **Results and paper** (`results/`, `figures/`, `partitions/`, `initial_states/`, the
+  preregistration, and the paper text, tables and PDF): CC BY 4.0, see
+  [LICENSE-CC-BY-4.0](LICENSE-CC-BY-4.0).
+- **Third-party**: `paper/IEEEtran.cls` and `paper/IEEEtran.bst` (Michael Shell, V1.8b / 1.14)
+  are redistributed unmodified from CTAN under the LaTeX Project Public License so the paper
+  builds without a TeX package install. The robomimic datasets are not redistributed here.
+
+## Citing
+
+Citation metadata is in `CITATION.cff`; `.zenodo.json` carries the same metadata for the Zenodo
+archive. `python analysis/audit_claims.py` mechanically re-checks the
 hand-written quantitative statements in the paper against the result files.
 
 ## Compute notes
