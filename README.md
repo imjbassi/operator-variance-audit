@@ -85,11 +85,16 @@ committed. Hardware used: one RTX 4070 (12 GB), WSL2.
 
 ## Citing
 
-Archived on Zenodo. Version 1.0.0: [10.5281/zenodo.23109851](https://doi.org/10.5281/zenodo.23109851).
-All versions (always resolves to the latest): [10.5281/zenodo.23109850](https://doi.org/10.5281/zenodo.23109850).
+Archived on Zenodo. All versions (always resolves to the latest):
+[10.5281/zenodo.23109850](https://doi.org/10.5281/zenodo.23109850).
+
+| Version | DOI | Contents |
+|---|---|---|
+| 1.1.0 | [10.5281/zenodo.23115088](https://doi.org/10.5281/zenodo.23115088) | Amendments 4-5, post hoc state-level analyses, six-page paper |
+| 1.0.0 | [10.5281/zenodo.23109851](https://doi.org/10.5281/zenodo.23109851) | First release: Stages 1 and 2, Amendments 1-3 |
 
 > Bassi, J. (2026). *Operator-Composition Variance in robomimic Multi-Human Benchmarks:
-> preregistration, code, and results* (v1.0.0). Zenodo. https://doi.org/10.5281/zenodo.23109851
+> preregistration, code, and results* (v1.1.0). Zenodo. https://doi.org/10.5281/zenodo.23115088
 
 Citation metadata is in `CITATION.cff`; `.zenodo.json` carries the same metadata for the Zenodo
 archive. `python analysis/audit_claims.py` mechanically re-checks the
