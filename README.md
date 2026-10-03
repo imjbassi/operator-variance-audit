@@ -90,11 +90,12 @@ Archived on Zenodo. All versions (always resolves to the latest):
 
 | Version | DOI | Contents |
 |---|---|---|
+| 1.1.1 | [10.5281/zenodo.23115600](https://doi.org/10.5281/zenodo.23115600) | Text-only: robomimic quote stated as a relative decrease with pointer; Limitations lists the paired-threshold rule |
 | 1.1.0 | [10.5281/zenodo.23115088](https://doi.org/10.5281/zenodo.23115088) | Amendments 4-5, post hoc state-level analyses, six-page paper |
 | 1.0.0 | [10.5281/zenodo.23109851](https://doi.org/10.5281/zenodo.23109851) | First release: Stages 1 and 2, Amendments 1-3 |
 
 > Bassi, J. (2026). *Operator-Composition Variance in robomimic Multi-Human Benchmarks:
-> preregistration, code, and results* (v1.1.0). Zenodo. https://doi.org/10.5281/zenodo.23115088
+> preregistration, code, and results* (v1.1.1). Zenodo. https://doi.org/10.5281/zenodo.23115600
 
 Citation metadata is in `CITATION.cff`; `.zenodo.json` carries the same metadata for the Zenodo
 archive. `python analysis/audit_claims.py` mechanically re-checks the
