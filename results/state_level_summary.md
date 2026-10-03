@@ -11,12 +11,14 @@
 
 ## Smallest resolvable difference between two three-seed means (points, 95%)
 
-| case | paired, normal | paired, t(4) | unpaired, normal | unpaired, t(4) |
-|---|---|---|---|---|
-| stage1_lift | 2.7 | 3.8 | 2.8 | 4.0 |
-| stage1_can | 3.7 | 5.3 | 5.1 | 7.2 |
-| stage1_square | 12.7 | 18.0 | 13.4 | 18.9 |
-| stage2_square | 5.0 | 7.1 | 5.2 | 7.3 |
+Paired uses max(seed SD, per-state floor) (Amendment 5); the raw-seed-SD value is shown for reference.
+
+| case | paired SD used | paired, normal | paired, t(4) | paired with raw seed SD | unpaired, normal | unpaired, t(4) |
+|---|---|---|---|---|---|---|
+| stage1_lift | 0.017 | 2.7 | 3.8 | 2.7 | 2.8 | 4.0 |
+| stage1_can | 0.032 (floor) | 5.1 | 7.2 | 3.7 | 5.1 | 7.2 |
+| stage1_square | 0.079 | 12.7 | 18.0 | 12.7 | 13.4 | 18.9 |
+| stage2_square | 0.031 | 5.0 | 7.1 | 5.0 | 5.2 | 7.3 |
 
 ## Tier pairings (Arm B partition means, Square)
 
@@ -32,4 +34,4 @@
 
 - stage1_square: seed SD 0.079, residual SD 0.057; at R = 2 the partition SD is 0.159, 2.78 x the residual; power 0.18 (MC SE 0.027); power at R = 1: 0.01
 - stage2_square: seed SD 0.031, residual SD 0.045; at R = 2 the partition SD is 0.063, 1.40 x the residual; power 0.13 (MC SE 0.024); power at R = 1: 0.00
-- largest false-positive rate at R = 1 across tasks and stages: 0.01
+- false positives at R = 1: at most 1 of 200 simulations per task and stage (exact 95% upper bound 2.8%); too few runs to show a rate below the nominal 2.5%

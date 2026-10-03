@@ -16,8 +16,12 @@
    "states_always_solved": 46,
    "states_never_solved": 0,
    "states_discriminating": 4,
+   "paired_sd_used": 0.016865480854231375,
+   "paired_sd_is_floor": false,
    "mdd_paired_normal": 0.026990390608236606,
    "mdd_paired_t4": 0.038233335658987254,
+   "mdd_paired_raw_normal": 0.026990390608236606,
+   "mdd_paired_raw_t4": 0.038233335658987254,
    "mdd_unpaired_normal": 0.02809627064747747,
    "mdd_unpaired_t4": 0.03979987403750064
   },
@@ -37,8 +41,12 @@
    "states_always_solved": 29,
    "states_never_solved": 0,
    "states_discriminating": 21,
-   "mdd_paired_normal": 0.03711178708632524,
-   "mdd_paired_t4": 0.05257083653110734,
+   "paired_sd_used": 0.031902629637347725,
+   "paired_sd_is_floor": true,
+   "mdd_paired_normal": 0.051054840522136,
+   "mdd_paired_t4": 0.07232191942058083,
+   "mdd_paired_raw_normal": 0.03711178708632524,
+   "mdd_paired_raw_t4": 0.05257083653110734,
    "mdd_unpaired_normal": 0.05115262057803096,
    "mdd_unpaired_t4": 0.07246043011322142
   },
@@ -58,8 +66,12 @@
    "states_always_solved": 3,
    "states_never_solved": 1,
    "states_discriminating": 46,
+   "paired_sd_used": 0.07944250191875322,
+   "paired_sd_is_floor": false,
    "mdd_paired_normal": 0.12713448114613238,
    "mdd_paired_t4": 0.18009281014287776,
+   "mdd_paired_raw_normal": 0.12713448114613238,
+   "mdd_paired_raw_t4": 0.18009281014287776,
    "mdd_unpaired_normal": 0.1335956175817045,
    "mdd_unpaired_t4": 0.18924535638295906
   },
@@ -79,8 +91,12 @@
    "states_always_solved": 30,
    "states_never_solved": 4,
    "states_discriminating": 466,
+   "paired_sd_used": 0.031286489807014886,
+   "paired_sd_is_floor": false,
    "mdd_paired_normal": 0.0500688114350493,
    "mdd_paired_t4": 0.07092515634281324,
+   "mdd_paired_raw_normal": 0.0500688114350493,
+   "mdd_paired_raw_t4": 0.07092515634281324,
    "mdd_unpaired_normal": 0.0515927149770758,
    "mdd_unpaired_t4": 0.07308384742957501
   }
@@ -314,6 +330,8 @@
    "power_R3": 0.32,
    "mc_se_power_R2": 0.02378024390118823
   },
-  "false_positive_max_R1": 0.005
+  "false_positive_max_R1": 0.005,
+  "false_positive_max_count": 1,
+  "false_positive_exact_upper95": 0.027541898457205637
  }
 }

@@ -1,4 +1,4 @@
-"""POST HOC state-level analyses added after external review (PREREGISTRATION.md Amendment 4).
+"""POST HOC state-level analyses added after informal review (PREREGISTRATION.md Amendments 4 and 5).
 Not preregistered tests. Everything is computed from the committed per-rollout CSVs and JSON.
 
   (a) Seed effect on shared initial states. Evaluation on stored states is repeatable, so the
@@ -9,9 +9,11 @@ Not preregistered tests. Everything is computed from the committed per-rollout C
                                 q_i(1-q_i) bias-corrected by m/(m-1), m = number of checkpoints)
         - Cochran's Q           exact paired test that all checkpoints share one success rate
         - chi-square of the seed SD against the binomial floor, for comparison with the draft
-  (b) Resolvability of two three-seed means: paired (both methods on the same stored states, which
-      is what the seed SD measured on shared states gives) and unpaired (independent draws of
-      initial conditions, as with unseeded environment resets).
+  (b) Resolvability of two three-seed means: paired (both methods on the same stored states) and
+      unpaired (independent draws of initial conditions, as with unseeded environment resets).
+      The paired run-to-run SD is max(s_A, per-state floor) (Amendment 5): s_A is itself a noisy
+      ten-seed estimate, and where it falls below the floor (Can) it understates the noise that
+      shared-state evaluation alone produces. The raw-s_A threshold is kept as mdd_paired_raw_*.
   (c) Tier pairings: all 15 pairings of the six Arm B partitions, ranked by between-pair share.
   (d) Monte Carlo error of the preregistered 2,000-resample p-value for the Stage 2 contrast D.
   (e) Why power at a fixed ratio falls from Stage 1 to Stage 2.
@@ -63,6 +65,7 @@ def seed_effect(M):
     Q, df, pQ = cochran_q(M)
     z, t4 = 1.96, float(stats.t.ppf(0.975, 4))
     unp = np.sqrt(ckpt2 + binom2)
+    s_pair = max(s, float(np.sqrt(state2)))   # Amendment 5
     return {"n_checkpoints": m, "n_states": n, "mean": p, "seed_sd": s,
             "binomial_floor": float(np.sqrt(binom2)), "per_state_floor": float(np.sqrt(state2)),
             "seed_sd_above_per_state_floor": float(np.sqrt(ckpt2)),
@@ -70,7 +73,9 @@ def seed_effect(M):
             "cochran_q": Q, "cochran_df": df, "cochran_p": pQ,
             "states_always_solved": int((q == 1).sum()), "states_never_solved": int((q == 0).sum()),
             "states_discriminating": int(((q > 0) & (q < 1)).sum()),
-            "mdd_paired_normal": float(z * s * np.sqrt(2 / 3)), "mdd_paired_t4": float(t4 * s * np.sqrt(2 / 3)),
+            "paired_sd_used": s_pair, "paired_sd_is_floor": bool(s_pair > s),
+            "mdd_paired_normal": float(z * s_pair * np.sqrt(2 / 3)), "mdd_paired_t4": float(t4 * s_pair * np.sqrt(2 / 3)),
+            "mdd_paired_raw_normal": float(z * s * np.sqrt(2 / 3)), "mdd_paired_raw_t4": float(t4 * s * np.sqrt(2 / 3)),
             "mdd_unpaired_normal": float(z * unp * np.sqrt(2 / 3)), "mdd_unpaired_t4": float(t4 * unp * np.sqrt(2 / 3))}
 
 
@@ -139,9 +144,12 @@ def main():
                  f"{v['chi2_vs_binomial_p']:.3f} | {v['cochran_q']:.2f} ({v['cochran_df']}) | {v['cochran_p']:.4f} | "
                  f"{v['states_discriminating']} of {v['n_states']} |")
     L += ["", "## Smallest resolvable difference between two three-seed means (points, 95%)", "",
-          "| case | paired, normal | paired, t(4) | unpaired, normal | unpaired, t(4) |", "|---|---|---|---|---|"]
+          "Paired uses max(seed SD, per-state floor) (Amendment 5); the raw-seed-SD value is shown for reference.", "",
+          "| case | paired SD used | paired, normal | paired, t(4) | paired with raw seed SD | unpaired, normal | unpaired, t(4) |",
+          "|---|---|---|---|---|---|---|"]
     for k, v in R["seed_effect"].items():
-        L.append(f"| {k} | {100*v['mdd_paired_normal']:.1f} | {100*v['mdd_paired_t4']:.1f} | "
+        L.append(f"| {k} | {v['paired_sd_used']:.3f}{' (floor)' if v['paired_sd_is_floor'] else ''} | "
+                 f"{100*v['mdd_paired_normal']:.1f} | {100*v['mdd_paired_t4']:.1f} | {100*v['mdd_paired_raw_normal']:.1f} | "
                  f"{100*v['mdd_unpaired_normal']:.1f} | {100*v['mdd_unpaired_t4']:.1f} |")
     L += ["", "## Tier pairings (Arm B partition means, Square)", ""]
     for k, v in R["tier_pairings"].items():
@@ -159,7 +167,13 @@ def main():
         L.append(f"- {k}: seed SD {v['seed_sd_A']:.3f}, residual SD {v['resid_sd_B']:.3f}; at R = 2 the partition SD is "
                  f"{v['sd_p_at_R2']:.3f}, {v['sd_p_over_resid_at_R2']:.2f} x the residual; power {v['power_R2']:.2f} "
                  f"(MC SE {v['mc_se_power_R2']:.3f}); power at R = 1: {v['power_R1']:.2f}")
-    L.append(f"- largest false-positive rate at R = 1 across tasks and stages: {R['power']['false_positive_max_R1']:.2f}")
+    fp_k = round(R["power"]["false_positive_max_R1"] * N_POWER_SIM)
+    R["power"]["false_positive_max_count"] = int(fp_k)
+    R["power"]["false_positive_exact_upper95"] = float(stats.beta.ppf(0.975, fp_k + 1, N_POWER_SIM - fp_k))
+    L.append(f"- false positives at R = 1: at most {fp_k} of {N_POWER_SIM} simulations per task and stage "
+             f"(exact 95% upper bound {100*R['power']['false_positive_exact_upper95']:.1f}%); too few runs to show a rate below the nominal 2.5%")
+    with open(os.path.join(RES, "state_level.json"), "w") as fh:
+        json.dump(R, fh, indent=1)
     with open(os.path.join(RES, "state_level_summary.md"), "w") as fh:
         fh.write("\n".join(L) + "\n")
     print("\n".join(L))

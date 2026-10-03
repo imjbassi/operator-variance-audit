@@ -93,6 +93,10 @@ def state_macros(M, pre, v):
     M[pre + "ChiB"] = f"{v['chi2_vs_binomial']:.1f}"; M[pre + "ChiBp"] = pv(v["chi2_vs_binomial_p"])
     M[pre + "Discrim"] = str(v["states_discriminating"]); M[pre + "NStates"] = str(v["n_states"])
     M[pre + "MDDu"] = pts(v["mdd_unpaired_normal"], 1); M[pre + "MDDut"] = pts(v["mdd_unpaired_t4"], 1)
+    # Paired thresholds quoted in the text use max(s_A, per-state floor) (Amendment 5); this
+    # overrides the raw-s_A values that task_macros() takes from exploratory.json.
+    M[pre + "MDD"] = pts(v["mdd_paired_normal"], 1); M[pre + "MDDt"] = pts(v["mdd_paired_t4"], 1)
+    M[pre + "MDDraw"] = pts(v["mdd_paired_raw_normal"], 1)
     M[pre + "SDck"] = f3(v["seed_sd_above_per_state_floor"])
 
 
@@ -114,9 +118,6 @@ def main():
     ex, expl = load("exact_bootstrap.json"), load("exploratory.json")
     sl = load("state_level.json")
     M = {}
-    for key, pre in (("stage1_lift", "OneLift"), ("stage1_can", "OneCan"), ("stage1_square", "OneSq"),
-                     ("stage2_square", "TwoSq")):
-        state_macros(M, pre, sl["seed_effect"][key])
     for key, pre in (("stage1_square", "OneSq"), ("stage2_square", "TwoSq")):
         tp = sl["tier_pairings"][key]
         M[pre + "PairsReach"] = str(tp["n_at_least_observed"]); M[pre + "PairsRank"] = str(tp["rank_of_tier_pairing"])
@@ -124,6 +125,8 @@ def main():
         M[pre + "PowRatio"] = f2(pw["sd_p_over_resid_at_R2"]); M[pre + "PowSE"] = pts(pw["mc_se_power_R2"], 1)
         M[pre + "PowSdp"] = f3(pw["sd_p_at_R2"])
     M["FPmax"] = pts(sl["power"]["false_positive_max_R1"], 1)
+    M["FPmaxCount"] = str(sl["power"]["false_positive_max_count"])
+    M["FPupper"] = pts(sl["power"]["false_positive_exact_upper95"], 1)
     g = sl["stage2_D"]
     M["TwoSqDmcSE"] = f"{g['mc_se_raw']:.4f}"; M["TwoSqDmcSEHolm"] = f"{g['mc_se_holm']:.4f}"
     for task in ("lift", "can", "square"):
@@ -131,6 +134,10 @@ def main():
                     expl["stage1"], task)
     task_macros(M, "TwoSq", a2["tasks"]["square"], a2["primary_family"], ex["stage2"], ex["stage2"]["holm"],
                 expl["stage2"], "square")
+    # state-level (post hoc) macros last: their paired thresholds must override task_macros()
+    for key, pre in (("stage1_lift", "OneLift"), ("stage1_can", "OneCan"), ("stage1_square", "OneSq"),
+                     ("stage2_square", "TwoSq")):
+        state_macros(M, pre, sl["seed_effect"][key])
     g = expl["stage_agreement"]
     M["AgreeR"] = f2(g["pearson_r"]); M["AgreeRsq"] = pts(g["pearson_r"] ** 2)
     M["AgreeSD"] = f3(g["sd_diff"]); M["AgreeExp"] = f3(g["expected_sd_diff_binomial"])
@@ -198,8 +205,9 @@ def main():
         for key, lab in (("stage1_lift", "Lift"), ("stage1_can", "Can"), ("stage1_square", "Square"),
                          ("stage2_square", "Square")):
             v = sl["seed_effect"][key]
+            mark = "$^{*}$" if v["paired_sd_is_floor"] else ""
             fh.write(f"{lab} & {v['n_states']} & {v['seed_sd']:.3f} & {v['binomial_floor']:.3f} & {v['per_state_floor']:.3f} & "
-                     f"{pv(v['cochran_p'])} & {100 * v['mdd_paired_normal']:.1f} ({100 * v['mdd_paired_t4']:.1f}) & "
+                     f"{pv(v['cochran_p'])} & {100 * v['mdd_paired_normal']:.1f} ({100 * v['mdd_paired_t4']:.1f}){mark} & "
                      f"{100 * v['mdd_unpaired_normal']:.1f} ({100 * v['mdd_unpaired_t4']:.1f}) \\\\\n")
         fh.write("\\bottomrule\n\\end{tabular}\n")
     print(f"wrote {len(M)} macros and 3 tables")

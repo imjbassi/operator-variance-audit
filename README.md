@@ -24,14 +24,14 @@ not robustly (Monte Carlo SE 0.007; exact enumeration 0.0501), and is not treate
 - Draft paper: [paper/paper.pdf](paper/paper.pdf) (source `paper/paper.tex`)
 - Result summaries: `results/analysis_summary.md` (Stage 1), `results/analysis_stage2_summary.md`
   (Stage 2), `results/exact_bootstrap_summary.md`, `results/exploratory_summary.md`,
-  `results/state_level_summary.md` (post hoc, Amendment 4),
+  `results/state_level_summary.md` (post hoc, Amendments 4-5),
   `results/GATE_B_notes.md` (notes written before any Arm C result existed)
 
 ## Layout
 
 | Path | Contents |
 |------|----------|
-| `PREREGISTRATION.md` | Frozen predictions, falsification criteria, analysis plan, Amendments 1-4 |
+| `PREREGISTRATION.md` | Frozen predictions, falsification criteria, analysis plan, Amendments 1-5 |
 | `env/` | Pinned environment build, dataset download and checksums, resolved lock file, worker launchers, Windows watchdog |
 | `partitions/` | Immutable partition assignments (JSON) for Arms A, B, C |
 | `initial_states/` | Fixed evaluation initial conditions: 50 per task (Stage 1), 500 for Square (Stage 2) |

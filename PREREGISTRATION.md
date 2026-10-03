@@ -344,3 +344,28 @@ independent state sets (unpaired) are added.
 Stage 1 arises because exactly the three pairings that keep the two "better"
 operators together reach the observed between-tier share. The Stage 1
 pattern was therefore a two-operator pattern, not a tier pattern.
+
+**Amendment 5 (2026-10-02, after a second informal review; all results
+known. Reporting and post hoc analysis only; no new data.)**
+
+(a) *Wording.* The review that prompted Amendment 4 was informal, not an
+independent external review. Amendment 4 is left as written; "external
+review" there should be read as "informal review".
+
+(b) *Paired resolvability thresholds.* The paired threshold of Amendment 4(c)
+used the Arm A seed SD directly. On Can that SD (0.023, bootstrap interval
+reaching 0) is below the per-state floor (0.032), so it understates the noise
+that shared-state evaluation alone produces and gives an optimistic
+threshold (3.7 points). Paired thresholds now use the larger of the seed SD
+and the per-state floor (Can: 5.1 points; Lift and Square unchanged). The
+raw-SD value is kept in `results/state_level.json` for reference. The
+earlier explanation that the Can paired/unpaired gap came from states solved
+by every checkpoint was wrong: the per-state and binomial floors coincide on
+Can, and the gap came entirely from the seed SD falling below the floor.
+
+(c) *False-positive rate of the headline procedure.* At a true ratio of 1 the
+interval excluded 1 in at most 1 of 200 simulations per task and stage. That
+is consistent with a rate below the nominal 2.5% but cannot demonstrate it
+(exact 95% upper bound 2.8%). The conservativeness of the ratio is a property
+of its construction (noise floor in the denominator only), not a simulation
+finding.

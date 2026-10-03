@@ -68,9 +68,14 @@ check(se["stage1_square"]["per_state_floor"] < se["stage1_square"]["binomial_flo
       "Square Stage 1: per-state floor barely smaller than binomial floor")
 check(se["stage1_square"]["states_discriminating"] == 46, "Square Stage 1: 46 of 50 states discriminate between seeds")
 gaps = {k: v["mdd_unpaired_normal"] - v["mdd_paired_normal"] for k, v in se.items()}
-check(max(gaps, key=gaps.get) == "stage1_can" and all(g >= -1e-12 for g in gaps.values()),
-      "unpaired threshold never below paired, and the gap is largest on Can")
-check(se["stage1_can"]["states_always_solved"] >= 25, "Can: many states solved by every checkpoint")
+check(all(-1e-9 <= g < 0.01 for g in gaps.values()), "IV-E: unpaired never below paired, and pairing gains < 1 point on every task")
+check(se["stage1_can"]["paired_sd_is_floor"] and not any(se[k]["paired_sd_is_floor"] for k in se if k != "stage1_can"),
+      "Amendment 5: only Can uses the per-state floor for its paired threshold")
+check(se["stage1_can"]["seed_sd"] < se["stage1_can"]["per_state_floor"], "Can: seed SD below the per-state floor")
+check(abs(se["stage1_can"]["per_state_floor"] - se["stage1_can"]["binomial_floor"]) < 0.001, "Can: per-state and binomial floors coincide")
+check(a1["tasks"]["can"]["A"]["sd_seed_ci"][0] < 0.001, "Can: seed-SD bootstrap interval reaches zero")
+check(sl["power"]["false_positive_max_count"] <= 1 and sl["power"]["false_positive_exact_upper95"] > 0.025,
+      "FP: at most 1 of 200, and the exact upper bound exceeds the nominal 2.5%")
 check(a2["tasks"]["square"]["A"]["sd_seed"] < 0.5 * a1["tasks"]["square"]["A"]["sd_seed"], "Square seed SD shrank by more than half from 50 to 500 rollouts")
 g2 = sl["stage2_D"]
 check(g2["p_holm_resampled"] < 0.05 and g2["ci_excludes_0_resampled"], "Stage 2 D: preregistered computation meets both readings of the rule")
@@ -80,7 +85,6 @@ check(tp1["n_at_least_observed"] == 3 and tp1["all_at_least_observed_pair_the_tw
       "Stage 1 tier: exactly 3 pairings reach the observed share, all pair the two better operators, tier pairing ranks third")
 check(tp2["n_at_least_observed"] == 7, "Stage 2 tier: 7 of 15 pairings reach the observed share")
 pw = sl["power"]
-check(pw["false_positive_max_R1"] < 0.025, "false-positive rate at R = 1 below nominal 2.5% everywhere")
 check(pw["stage2_square"]["sd_p_over_resid_at_R2"] < pw["stage1_square"]["sd_p_over_resid_at_R2"] and pw["stage2_square"]["power_R2"] < pw["stage1_square"]["power_R2"],
       "power at R = 2 falls with the sd_p/residual ratio from Stage 1 to Stage 2")
 check(np.sqrt(0.25 / 200) <= 0.0355, "Fig. 2 caption: MC SE of power up to 3.5 points with 200 simulations")
