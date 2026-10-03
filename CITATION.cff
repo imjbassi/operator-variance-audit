@@ -19,7 +19,7 @@ identifiers:
   - type: doi
     value: 10.5281/zenodo.23109851
     description: "Version 1.0.0"
-version: "1.1.0"
+version: "1.1.1"
 date-released: "2026-10-02"
 license: MIT
 # Code is MIT. Results, figures, preregistration and paper are CC BY 4.0 (see LICENSE-CC-BY-4.0).
