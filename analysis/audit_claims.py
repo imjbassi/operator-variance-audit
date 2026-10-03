@@ -54,8 +54,36 @@ check(not any(T[arm]["disagree"][c] for T in list(a1["tasks"].values()) + list(a
 # Section IV-A: Can spread below floor, Lift marginally above, Square above
 A = {t: a1["tasks"][t]["A"] for t in ("lift", "can", "square")}
 check(A["can"]["sd_seed"] < A["can"]["binomial_sd_50_rollouts"], "Can: seed SD below the binomial floor")
-check(0 < A["lift"]["sd_seed"] - A["lift"]["binomial_sd_50_rollouts"] < 0.005, "Lift: seed SD marginally above the floor (< 0.005)")
-check(A["square"]["sd_seed"] > A["square"]["binomial_sd_50_rollouts"], "Square: seed SD above the floor")
+check(A["lift"]["sd_seed"] > A["lift"]["binomial_sd_50_rollouts"] and A["square"]["sd_seed"] > A["square"]["binomial_sd_50_rollouts"],
+      "Lift and Square: seed SD above the binomial floor")
+
+# Amendment 4 (post hoc) statements, Sections III-D, IV-A, IV-C, IV-D, IV-E
+sl = load("state_level.json"); se = sl["seed_effect"]
+check(all(se[f"stage1_{t}"]["cochran_p"] > 0.05 for t in ("lift", "can", "square")), "Stage 1: Cochran's Q finds no seed effect on any task")
+check(se["stage2_square"]["cochran_p"] < 0.05, "Stage 2: Cochran's Q detects a seed effect on Square")
+check(se["stage1_lift"]["chi2_vs_binomial_p"] > 0.05 and se["stage1_square"]["chi2_vs_binomial_p"] > 0.05,
+      "Stage 1: chi-square vs binomial floor not significant on Lift and Square")
+check(se["stage1_square"]["per_state_floor"] < se["stage1_square"]["binomial_floor"]
+      and se["stage1_square"]["binomial_floor"] - se["stage1_square"]["per_state_floor"] < 0.01,
+      "Square Stage 1: per-state floor barely smaller than binomial floor")
+check(se["stage1_square"]["states_discriminating"] == 46, "Square Stage 1: 46 of 50 states discriminate between seeds")
+gaps = {k: v["mdd_unpaired_normal"] - v["mdd_paired_normal"] for k, v in se.items()}
+check(max(gaps, key=gaps.get) == "stage1_can" and all(g >= -1e-12 for g in gaps.values()),
+      "unpaired threshold never below paired, and the gap is largest on Can")
+check(se["stage1_can"]["states_always_solved"] >= 25, "Can: many states solved by every checkpoint")
+check(a2["tasks"]["square"]["A"]["sd_seed"] < 0.5 * a1["tasks"]["square"]["A"]["sd_seed"], "Square seed SD shrank by more than half from 50 to 500 rollouts")
+g2 = sl["stage2_D"]
+check(g2["p_holm_resampled"] < 0.05 and g2["ci_excludes_0_resampled"], "Stage 2 D: preregistered computation meets both readings of the rule")
+check(abs(0.05 - g2["p_holm_resampled"]) <= 0.0011 and g2["mc_se_holm"] > 0.005, "Stage 2 D: margin ~0.001, well inside MC SE of the Holm p")
+tp1, tp2 = sl["tier_pairings"]["stage1_square"], sl["tier_pairings"]["stage2_square"]
+check(tp1["n_at_least_observed"] == 3 and tp1["all_at_least_observed_pair_the_two_better"] and tp1["rank_of_tier_pairing"] == 3,
+      "Stage 1 tier: exactly 3 pairings reach the observed share, all pair the two better operators, tier pairing ranks third")
+check(tp2["n_at_least_observed"] == 7, "Stage 2 tier: 7 of 15 pairings reach the observed share")
+pw = sl["power"]
+check(pw["false_positive_max_R1"] < 0.025, "false-positive rate at R = 1 below nominal 2.5% everywhere")
+check(pw["stage2_square"]["sd_p_over_resid_at_R2"] < pw["stage1_square"]["sd_p_over_resid_at_R2"] and pw["stage2_square"]["power_R2"] < pw["stage1_square"]["power_R2"],
+      "power at R = 2 falls with the sd_p/residual ratio from Stage 1 to Stage 2")
+check(np.sqrt(0.25 / 200) <= 0.0355, "Fig. 2 caption: MC SE of power up to 3.5 points with 200 simulations")
 
 # Section IV-B statements
 for t in ("lift", "can", "square"):

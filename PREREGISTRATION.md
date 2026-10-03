@@ -306,3 +306,41 @@ did not survive a tenfold increase in rollouts. P4 as literally stated
 (permutation p > 0.05) holds in both stages, trivially, because of the 1/15
 floor. The paper reports: the tier pattern seen at 50 rollouts was not
 reproduced at 500, and no tier-level claim is made in either direction.
+
+**Amendment 4 (2026-10-02, after external review of the draft; all results
+were known. Reporting and analysis clarifications only; no new data.)**
+
+(a) *Decision rule for D.* Section 6.5 states that D is supported if its 95%
+interval excludes 0, and Section 6.8 states that the primary family is
+Holm-corrected. These are two different criteria. The rule is clarified as:
+a contrast is supported if its Holm-adjusted one-sided p-value is below 0.05
+within its family; intervals are reported unadjusted, for description.
+Under this rule and the preregistered 2,000-resample computation, the
+Stage 2 Square contrast nominally meets the threshold (Holm p = 0.049; the
+unadjusted interval also excludes 0). The Monte Carlo standard error of that
+Holm p-value is about 0.007. The exact enumeration (Amendment 3b), which was
+added after this result was seen, gives Holm p = 0.0501. The paper states
+plainly that the preregistered computation nominally met the threshold, and
+that the result is not treated as established because it does not survive
+Monte Carlo error. That is a conservative choice made after seeing the
+result. Stage 1 decisions are unchanged under either reading.
+
+(b) *Null floor for the seed spread.* Evaluation on stored initial
+conditions is repeatable, so checkpoints share the same states and their
+outcomes are not independent Bernoulli draws. The appropriate null for "no
+difference between seeds in overall success rate" is the per-state floor
+mean_i q_i(1 - q_i)/n, not p(1 - p)/n, and the appropriate test is Cochran's
+Q on the checkpoints-by-states success matrix. Both are added as post hoc
+analyses (`analysis/state_level.py`). The binomial floor p(1 - p)/n is kept
+only where it is the right quantity: the sampling error of one checkpoint's
+success rate against a fresh draw of initial conditions.
+
+(c) *Resolvability.* The thresholds previously reported are, in fact, for
+comparisons on a shared set of initial conditions (paired), because they use
+the seed SD measured on shared states. Thresholds for comparisons on
+independent state sets (unpaired) are added.
+
+(d) *Tier pattern at 50 rollouts.* The exact permutation p of 0.200 at
+Stage 1 arises because exactly the three pairings that keep the two "better"
+operators together reach the observed between-tier share. The Stage 1
+pattern was therefore a two-operator pattern, not a tier pattern.

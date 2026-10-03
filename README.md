@@ -9,32 +9,35 @@ operators are in the training set, and evaluation (rollout) noise.
 **Outcome in one paragraph.** The preregistered claim, that operator-composition variance exceeds
 seed variance, was **not supported on any task** (Lift, Can, Square; 138 BC-RNN runs). With six
 operators the preregistered test has about 18% power at a true ratio of two, so that negative
-result bounds little. What the data do establish is about the reporting convention: on Lift and
-Can the across-seed spread of a 50-rollout success rate is indistinguishable from binomial rollout
-noise; on Square two 3-seed means must differ by about 13 points to be distinguishable; and when
-the same 46 Square checkpoints are re-evaluated with 500 rollouts, the 50-rollout numbers correlate
-only r = 0.56 with the 500-rollout ones and an apparent proficiency-tier pattern disappears. At
-500 rollouts the operator-partition SD is 0.054 against 0.014 for size-matched random partitions,
-a contrast that sits exactly on the decision boundary and is not claimed.
+result bounds little. What the data do establish is about the reporting convention: with 50
+rollouts on shared initial states, an exact paired test (Cochran's Q) finds no difference between
+ten seeds on any task, because checkpoints differ mainly in which states they solve; on Square two
+3-seed means must differ by about 13 points to be distinguishable; and when the same 46 Square
+checkpoints are re-evaluated with 500 rollouts, the seed effect becomes detectable, the 50-rollout
+numbers correlate only r = 0.56 with the 500-rollout ones, and an apparent proficiency-tier pattern
+disappears. At 500 rollouts the operator-partition SD is 0.054 against 0.014 for size-matched
+random partitions. That contrast nominally meets the preregistered threshold (Holm p = 0.049) but
+not robustly (Monte Carlo SE 0.007; exact enumeration 0.0501), and is not treated as established.
 
 - Preregistration and dated amendments: [PREREGISTRATION.md](PREREGISTRATION.md)
 - Gating check that operator identity ships in the files: [STEP0_operator_identity.md](STEP0_operator_identity.md)
 - Draft paper: [paper/paper.pdf](paper/paper.pdf) (source `paper/paper.tex`)
 - Result summaries: `results/analysis_summary.md` (Stage 1), `results/analysis_stage2_summary.md`
   (Stage 2), `results/exact_bootstrap_summary.md`, `results/exploratory_summary.md`,
+  `results/state_level_summary.md` (post hoc, Amendment 4),
   `results/GATE_B_notes.md` (notes written before any Arm C result existed)
 
 ## Layout
 
 | Path | Contents |
 |------|----------|
-| `PREREGISTRATION.md` | Frozen predictions, falsification criteria, analysis plan, Amendments 1-3 |
+| `PREREGISTRATION.md` | Frozen predictions, falsification criteria, analysis plan, Amendments 1-4 |
 | `env/` | Pinned environment build, dataset download and checksums, resolved lock file, worker launchers, Windows watchdog |
 | `partitions/` | Immutable partition assignments (JSON) for Arms A, B, C |
 | `initial_states/` | Fixed evaluation initial conditions: 50 per task (Stage 1), 500 for Square (Stage 2) |
 | `configs/` | Base BC-RNN low-dim config |
 | `scripts/` | Dataset verification, partition generation, training/eval queue, Stage 2 evaluation queue, collectors |
-| `analysis/` | Estimators (`vc.py`), preregistered analysis, exact bootstrap, exploratory analyses, figures, paper numbers |
+| `analysis/` | Estimators (`vc.py`), preregistered analysis, exact bootstrap, exploratory and post hoc state-level analyses, figures, paper numbers, claims audit |
 | `results/` | Per-run and per-rollout CSVs for both stages and all analysis outputs |
 | `figures/`, `paper/` | Generated figures; paper source, generated macros and tables, PDF |
 
@@ -47,7 +50,10 @@ python analysis/run_analysis.py                                   # Stage 1, res
 python analysis/run_analysis.py --runs results/runs_stage2.csv --tasks square --out_prefix analysis_stage2
 python analysis/exact_bootstrap.py
 python analysis/exploratory.py
-bash paper/build.sh                                               # numbers, tables, figures, PDF
+python analysis/state_level.py                                    # post hoc, Amendment 4
+python analysis/audit_claims.py                                   # re-checks hand-written claims in the paper
+bash paper/build.sh                                               # numbers, tables, figures, PDF (Linux/WSL)
+# on Windows: powershell -ExecutionPolicy Bypass -File paper\build.ps1
 ```
 
 Bootstrap seeds are fixed, so these reproduce the committed outputs.

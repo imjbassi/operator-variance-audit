@@ -124,30 +124,37 @@ def fig_square_stages(s1, s2):
     save(fig, "fig_square_stages")
 
 
-def fig_power(analysis):
+def fig_power(analysis, analysis2=None):
+    """Power of the headline procedure. Colour = task; line style = stage (solid: 50 rollouts,
+    dashed: Square at 500 rollouts). Every line is direct-labelled, so identity never rests on colour."""
     fig, ax = plt.subplots(figsize=(3.45, 2.3))
     cols = {"lift": "#2a78d6", "can": "#eb6834", "square": "#1baf7a"}
     mk = {"lift": "o", "can": "s", "square": "^"}
+    series = [(analysis["tasks"][t].get("power_headline_procedure"), t, "-", TASK_TITLE[t] + ", 50")
+              for t in ["lift", "can", "square"]]
+    if analysis2 is not None:
+        series.append((analysis2["tasks"]["square"].get("power_headline_procedure"), "square", (0, (3, 1.6)), "Square, 500"))
     ends = []
-    for task in ["lift", "can", "square"]:
-        P = analysis["tasks"][task].get("power_headline_procedure")
+    for P, task, ls, label in series:
         if not P:
             continue
         R = [v["true_R"] for v in P.values()]; pw = [v["power"] for v in P.values()]
-        ax.plot(R, pw, color=cols[task], linewidth=1.5, marker=mk[task], markersize=4,
-                markeredgecolor=SURFACE, markeredgewidth=0.6, zorder=3)
-        ends.append((pw[-1], task))
+        solid = ls == "-"
+        ax.plot(R, pw, color=cols[task], linewidth=1.5, linestyle=ls, marker=mk[task], markersize=4,
+                markeredgecolor=SURFACE if solid else cols[task], markeredgewidth=0.6 if solid else 1.1, zorder=3,
+                markerfacecolor=cols[task] if solid else SURFACE)
+        ends.append((pw[-1], label))
     # direct labels at the line ends, nudged apart so they never collide
     ends.sort()
     ys = [e[0] for e in ends]
     for i in range(1, len(ys)):
-        if ys[i] - ys[i - 1] < 0.07:
-            ys[i] = ys[i - 1] + 0.07
-    for y, (_, task) in zip(ys, ends):
-        ax.text(4.08, y, TASK_TITLE[task], va="center", ha="left", fontsize=7, color=INK2)
+        if ys[i] - ys[i - 1] < 0.075:
+            ys[i] = ys[i - 1] + 0.075
+    for y, (_, label) in zip(ys, ends):
+        ax.text(4.08, y, label, va="center", ha="left", fontsize=6.6, color=INK2)
     ax.axhline(0.8, color=AXIS, linewidth=0.7, linestyle=(0, (3, 2)))
     ax.text(1.0, 0.815, "80% power", fontsize=6.5, color=MUTED, va="bottom")
-    ax.set_xlim(0.9, 4.75); ax.set_ylim(0, 1.0)
+    ax.set_xlim(0.9, 5.15); ax.set_ylim(0, 1.0)
     ax.set_xticks([1, 1.5, 2, 3, 4])
     ax.set_xlabel("True ratio of operator-partition SD to seed SD")
     ax.set_ylabel("P(95% interval excludes 1)")
@@ -172,7 +179,13 @@ def main():
         if len(s2) == 46:
             fig_square_stages(s1, s2)
     with open(os.path.join(REPO, "results", "analysis.json")) as fh:
-        fig_power(json.load(fh))
+        a1 = json.load(fh)
+    p2a = os.path.join(REPO, "results", "analysis_stage2.json")
+    a2 = None
+    if os.path.exists(p2a):
+        with open(p2a) as fh:
+            a2 = json.load(fh)
+    fig_power(a1, a2)
 
 
 if __name__ == "__main__":
