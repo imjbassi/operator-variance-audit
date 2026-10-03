@@ -132,5 +132,13 @@ Ck = [k for k in P if k.startswith("C_")]
 ov = [len(set(P[a]) & set(P[b])) for i, a in enumerate(Ck) for b in Ck[i + 1:]]
 check(195 <= np.mean(ov) <= 220, f"Arm C partitions have comparable overlap (mean {np.mean(ov):.0f} of 250)")
 
+# Section III: the stated number of amendments matches the preregistration
+import re
+tex = open(os.path.join(REPO, "paper", "paper.tex"), encoding="utf-8").read()
+words = {"one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7}
+m = re.search(r"followed by (\w+) dated amendments", tex)
+n_pre = len(re.findall(r"^\*\*Amendment \d", open(os.path.join(REPO, "PREREGISTRATION.md"), encoding="utf-8").read(), flags=re.M))
+check(m is not None and words.get(m.group(1)) == n_pre, f"Section III amendment count matches PREREGISTRATION.md ({n_pre})")
+
 print(f"\n{len(fails)} failure(s)")
 sys.exit(1 if fails else 0)
