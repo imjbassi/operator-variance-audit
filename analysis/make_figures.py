@@ -81,7 +81,7 @@ def arm_panel(ax, df, task, n_roll, show_xlabels=True):
 
 
 def fig_arms(df):
-    fig, axes = plt.subplots(1, 3, figsize=(7.16, 2.55), gridspec_kw={"wspace": 0.26})
+    fig, axes = plt.subplots(1, 3, figsize=(7.16, 2.15), gridspec_kw={"wspace": 0.26})
     lims = {"lift": (0.78, 1.015), "can": (0.74, 1.015), "square": (0.36, 0.82)}
     for ax, task in zip(axes, ["lift", "can", "square"]):
         n = int(df[(df.task == task)].n_rollouts.iloc[0])
@@ -112,7 +112,7 @@ def legend(fig, band_label):
 
 
 def fig_square_stages(s1, s2):
-    fig, axes = plt.subplots(1, 2, figsize=(7.16, 2.55), sharey=True, gridspec_kw={"wspace": 0.06})
+    fig, axes = plt.subplots(1, 2, figsize=(7.16, 2.15), sharey=True, gridspec_kw={"wspace": 0.06})
     for ax, df, n, ttl in ((axes[0], s1, 50, "Square, Stage 1: 50 rollouts per checkpoint"),
                            (axes[1], s2, 500, "Square, Stage 2: same checkpoints, 500 rollouts")):
         arm_panel(ax, df, "square", n)
@@ -127,7 +127,7 @@ def fig_square_stages(s1, s2):
 def fig_power(analysis, analysis2=None):
     """Power of the headline procedure. Colour = task; line style = stage (solid: 50 rollouts,
     dashed: Square at 500 rollouts). Every line is direct-labelled, so identity never rests on colour."""
-    fig, ax = plt.subplots(figsize=(3.45, 2.3))
+    fig, ax = plt.subplots(figsize=(3.45, 1.95))
     cols = {"lift": "#2a78d6", "can": "#eb6834", "square": "#1baf7a"}
     mk = {"lift": "o", "can": "s", "square": "^"}
     series = [(analysis["tasks"][t].get("power_headline_procedure"), t, "-", TASK_TITLE[t] + ", 50")
