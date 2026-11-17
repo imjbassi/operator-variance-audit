@@ -25,6 +25,8 @@ not robustly (Monte Carlo SE 0.007; exact enumeration 0.0501), and is not treate
 - Result summaries: `results/analysis_summary.md` (Stage 1), `results/analysis_stage2_summary.md`
   (Stage 2), `results/exact_bootstrap_summary.md`, `results/exploratory_summary.md`,
   `results/state_level_summary.md` (post hoc, Amendments 4-5),
+  `results/posthoc_review_summary.md` (post hoc, Amendment 6: 80%-power thresholds, attenuation,
+  jackknife scaling, max-selection bias),
   `results/GATE_B_notes.md` (notes written before any Arm C result existed)
 
 ## Layout
@@ -51,6 +53,7 @@ python analysis/run_analysis.py --runs results/runs_stage2.csv --tasks square --
 python analysis/exact_bootstrap.py
 python analysis/exploratory.py
 python analysis/state_level.py                                    # post hoc, Amendment 4
+python analysis/posthoc_review.py                                 # post hoc, Amendment 6
 python analysis/audit_claims.py                                   # re-checks hand-written claims in the paper
 bash paper/build.sh                                               # numbers, tables, figures, PDF (Linux/WSL)
 # on Windows: powershell -ExecutionPolicy Bypass -File paper\build.ps1

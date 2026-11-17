@@ -1,0 +1,90 @@
+{
+ "note": "Post hoc (Amendment 6). Not tests of the preregistered claims.",
+ "power80": {
+  "factor": 1.4294064790024283,
+  "stage1_lift": {
+   "mdd_paired_power80": 0.038580239206219696,
+   "mdd_unpaired_power80": 0.04016099129931005,
+   "mdd_paired_power50": 0.026990390608236606
+  },
+  "stage1_can": {
+   "mdd_paired_power80": 0.07297811982677692,
+   "mdd_unpaired_power80": 0.07311788727219039,
+   "mdd_paired_power50": 0.051054840522136
+  },
+  "stage1_square": {
+   "mdd_paired_power80": 0.1817268510548937,
+   "mdd_unpaired_power80": 0.19096244133761914,
+   "mdd_paired_power50": 0.12713448114613238
+  },
+  "stage2_square": {
+   "mdd_paired_power80": 0.07156868346121034,
+   "mdd_unpaired_power80": 0.07374696105755776,
+   "mdd_paired_power50": 0.0500688114350493
+  }
+ },
+ "attenuation": {
+  "var_true": 0.002265494144927536,
+  "sd_true": 0.04759720732277826,
+  "noise_var_lo": 0.004600942608695651,
+  "noise_var_hi": 0.0004600942608695652,
+  "reliability_lo": 0.32993737890793373,
+  "reliability_hi": 0.8311945193592024,
+  "predicted_r": 0.5236813354321643,
+  "n": 46,
+  "observed_r": 0.55786480720876,
+  "observed_var_50": 0.006567149758454106,
+  "model_var_50": 0.006866436753623187,
+  "disattenuated_r": 1.0652753296017052,
+  "predicted_r_ci": [
+   0.3207825187913579,
+   0.645731830220563
+  ],
+  "observed_r_ci": [
+   0.27539721532753614,
+   0.7394696532457671
+  ],
+  "n_boot": 10000
+ },
+ "jackknife": {
+  "stage1_lift": {
+   "n_operators": 6,
+   "factor": 2.041241452319315,
+   "sd_p_B": 0.011155467020454335,
+   "jackknife_sd_fresh_pool": 0.02277100170213243,
+   "raw_sd_partition_means": 0.014246507044288544,
+   "jackknife_sd_fresh_pool_raw": 0.0290805607295609
+  },
+  "stage1_can": {
+   "n_operators": 6,
+   "factor": 2.041241452319315,
+   "sd_p_B": 0.004216370213557576,
+   "jackknife_sd_fresh_pool": 0.008606629658238166,
+   "raw_sd_partition_means": 0.02680519573736622,
+   "jackknife_sd_fresh_pool_raw": 0.05471587667664494
+  },
+  "stage1_square": {
+   "n_operators": 6,
+   "factor": 2.041241452319315,
+   "sd_p_B": 0.08558296819136647,
+   "jackknife_sd_fresh_pool": 0.17469550228474265,
+   "raw_sd_partition_means": 0.09174037440678068,
+   "jackknife_sd_fresh_pool_raw": 0.18726425509041472
+  },
+  "stage2_square": {
+   "n_operators": 6,
+   "factor": 2.041241452319315,
+   "sd_p_B": 0.053576114080810214,
+   "jackknife_sd_fresh_pool": 0.10936178491593836,
+   "raw_sd_partition_means": 0.059493292494632054,
+   "jackknife_sd_fresh_pool_raw": 0.12144017477500055
+  }
+ },
+ "max_selection": {
+  "p": 0.6,
+  "n_rollouts": 50,
+  "binomial_sd": 0.06928203230275509,
+  "bias_max_of_40": 0.14589316503252325,
+  "bias_max_of_8": 0.09729459516657113
+ }
+}

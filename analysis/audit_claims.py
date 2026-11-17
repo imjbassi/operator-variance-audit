@@ -132,6 +132,27 @@ Ck = [k for k in P if k.startswith("C_")]
 ov = [len(set(P[a]) & set(P[b])) for i, a in enumerate(Ck) for b in Ck[i + 1:]]
 check(195 <= np.mean(ov) <= 220, f"Arm C partitions have comparable overlap (mean {np.mean(ov):.0f} of 250)")
 
+# Amendment 6 (post hoc) statements: Sections III-A, IV-B, IV-C, IV-E, IV-F
+ph = load("posthoc_review.json")
+check(abs(ph["power80"]["factor"] - (1.96 + 0.84) / 1.96) < 0.002, "IV-E: 80%-power factor equals (1.96 + 0.84)/1.96 = 1.43")
+check(all(abs(ph["power80"][k]["mdd_paired_power80"] - ph["power80"]["factor"] * se[k]["mdd_paired_normal"]) < 1e-12 for k in se),
+      "IV-E: 80%-power thresholds are the factor times the Eq. (1) thresholds")
+at = ph["attenuation"]
+check(abs(at["observed_r"] - g["pearson_r"]) < 1e-9, "IV-C: attenuation uses the same observed correlation as the stage-agreement analysis")
+check(at["predicted_r_ci"][0] <= at["observed_r"] <= at["predicted_r_ci"][1] and abs(at["observed_r"] - at["predicted_r"]) < 0.05,
+      f"IV-C: rollout noise alone predicts the observed correlation (predicted {at['predicted_r']:.2f}, observed {at['observed_r']:.2f})")
+jk = ph["jackknife"]["stage2_square"]
+check(jk["n_operators"] == 6 and abs(jk["factor"] - 5 / np.sqrt(6)) < 1e-12, "IV-F: jackknife factor is (n-1)/sqrt(n) with n = 6")
+check(50 * (1 - A["lift"]["mean"]) < 1 and 50 * (1 - A["can"]["mean"]) < 3, "IV-B: Lift and Can average under one and under three failures per 50 rollouts")
+mxs = ph["max_selection"]
+check(abs(mxs["p"] - 0.6) < 0.005 and mxs["n_rollouts"] == 50, "III-A: max-selection bias computed for a 60% policy with 50 rollouts")
+rng = np.random.default_rng(0)
+sim = (rng.binomial(50, mxs["p"], size=(200000, 40)).max(axis=1) / 50).mean() - mxs["p"]
+check(abs(sim - mxs["bias_max_of_40"]) < 0.002, f"III-A: exact bias of the max of 40 evaluations matches simulation ({100 * sim:.1f} points)")
+bib = open(os.path.join(REPO, "paper", "refs.bib"), encoding="utf-8").read()
+tex0 = open(os.path.join(REPO, "paper", "paper.tex"), encoding="utf-8").read()
+check(all(k in bib and k in tex0 for k in ("snyder2025step", "snyder2026nscore")), "STEP and N-SCORE are cited and present in refs.bib")
+
 # Section III: the stated number of amendments matches the preregistration
 import re
 tex = open(os.path.join(REPO, "paper", "paper.tex"), encoding="utf-8").read()

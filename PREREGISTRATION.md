@@ -369,3 +369,42 @@ is consistent with a rate below the nominal 2.5% but cannot demonstrate it
 (exact 95% upper bound 2.8%). The conservativeness of the ratio is a property
 of its construction (noise floor in the denominator only), not a simulation
 finding.
+
+**Amendment 6 (2026-11-16, after a third review; all results known. Reporting
+corrections and post hoc analysis only; no new data, and no preregistered
+decision changes.)**
+
+(a) *Resolvability at 80% power.* The threshold of Amendment 4(c),
+1.96 s sqrt(2/k), is the observed difference that reaches significance; a
+true difference of that size is detected only about half the time. The
+difference detected with 80% power is (1.96 + 0.84)/1.96 = 1.43 times larger
+(Square: 18.2 points paired at 50 rollouts, 7.2 at 500). Both are reported.
+
+(b) *Attenuation.* The correlation between the 50- and 500-rollout success
+rates of the 46 Square checkpoints (0.56) is compared with the value
+predicted if the two differ only by independent binomial rollout noise, with
+the variance of true success rates taken as the 500-rollout variance minus
+its binomial noise. Predicted 0.52 (checkpoint-bootstrap interval 0.32 to
+0.65); reliability of a success rate 0.33 at 50 rollouts and 0.83 at 500.
+
+(c) *Jackknife scaling (exploratory).* Leave-one-operator-out partitions
+share 200 of 250 demonstrations, so the Arm B partition SD understates the
+spread across entirely different operator pools. The delete-one jackknife
+factor (n-1)/sqrt(n) = 2.04 for n = 6 is applied to the Arm B partition SD
+and reported as an extrapolation only (Square: 0.175 at 50 rollouts, 0.109
+at 500). Arm C has the same overlap structure; the contrast D and its test
+are unchanged.
+
+(d) *Reporting corrections.* (i) The introduction said that Diffusion Policy
+reports on these datasets with three seeds and 50 episodes and implied a
+three-seed standard deviation; its tables give three-seed averages without
+standard deviations, and it notes that only 22 initial conditions were used
+on robomimic tasks. Corrected. (ii) Lift and Can are near ceiling (Arm A
+means 0.988 and 0.946), which compresses every variance component; the paper
+now says that these tasks neither support nor contradict the operator claim.
+(iii) Part of the gap between best-checkpoint and final-checkpoint success
+is the upward bias of a maximum over noisy evaluations: 14.6 points for 40
+independent 50-rollout evaluations of a 60% policy.
+
+Computed by `analysis/posthoc_review.py`; results in
+`results/posthoc_review.json` and `results/posthoc_review_summary.md`.
