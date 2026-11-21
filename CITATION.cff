@@ -14,6 +14,9 @@ identifiers:
     value: 10.5281/zenodo.23109850
     description: "Concept DOI: all versions, resolves to the latest"
   - type: doi
+    value: 10.5281/zenodo.24412105
+    description: "Version 1.2.0"
+  - type: doi
     value: 10.5281/zenodo.23115879
     description: "Version 1.1.2"
   - type: doi
@@ -25,8 +28,8 @@ identifiers:
   - type: doi
     value: 10.5281/zenodo.23109851
     description: "Version 1.0.0"
-version: "1.1.2"
-date-released: "2026-10-02"
+version: "1.2.0"
+date-released: "2026-11-21"
 license: MIT
 # Code is MIT. Results, figures, preregistration and paper are CC BY 4.0 (see LICENSE-CC-BY-4.0).
 keywords:
